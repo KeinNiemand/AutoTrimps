@@ -1,12 +1,13 @@
-//Helium
-
 MODULES["equipment"] = {};
-MODULES["equipment"].numHitsSurvived = 10;
-MODULES["equipment"].numHitsSurvivedScry = 80;
 MODULES["equipment"].capDivisor = 10;
 MODULES["equipment"].alwaysLvl2 = getPageSetting('always2');
 MODULES["equipment"].waitTill60 = true;
 MODULES["equipment"].equipHealthDebugMessage = false;
+
+//Psycho
+MODULES["equipment"].numHitsMult = 2; //This will multiply your maps.numHits, so beware
+MODULES["equipment"].mirroredDailyCap = false; //NOT needed since 5.5.0. By the way, I had JUST finished this feature =(
+
 var equipmentList = {
     'Dagger': {
         Upgrade: 'Dagadder',
@@ -93,10 +94,21 @@ var equipmentList = {
         Equip: false
     }
 };
-var mapresourcetojob = {"food": "Farmer", "wood": "Lumberjack", "metal": "Miner", "science": "Scientist"}; 
-function equipEffect(a,b){if(b.Equip)return a[b.Stat+'Calculated'];var c=a.increase.by*a.owned,d=game.upgrades.Gymystic.done?game.upgrades.Gymystic.modifier+0.01*(game.upgrades.Gymystic.done-1):1,e=a.increase.by*(a.owned+1)*d;return e-c}
-function equipCost(a,b){var c=parseFloat(getBuildingItemPrice(a,b.Resource,b.Equip,1));return c=b.Equip?Math.ceil(c*Math.pow(1-game.portal.Artisanistry.modifier,game.portal.Artisanistry.level)):Math.ceil(c*Math.pow(1-game.portal.Resourceful.modifier,game.portal.Resourceful.level)),c}
+var mapresourcetojob = {"food": "Farmer", "wood": "Lumberjack", "metal": "Miner", "science": "Scientist"};
 function PrestigeValue(a){var b=game.upgrades[a].prestiges,c=game.equipment[b],d;d=c.blockNow?"block":"undefined"==typeof c.health?"attack":"health";var e=Math.round(c[d]*Math.pow(1.19,c.prestige*game.global.prestige[d]+1));return e}
+
+function equipEffect(equip, equipInfo, levelsToBuy = 1) {
+    if (equipInfo.Equip) return equip[equipInfo.Stat + 'Calculated'] * levelsToBuy;
+    var c = equip.increase.by * equip.owned,
+        d = game.upgrades.Gymystic.done ? game.upgrades.Gymystic.modifier + 0.01 * (game.upgrades.Gymystic.done - 1) : 1,
+        e = equip.increase.by * (equip.owned + 1) * d;
+    return e - c
+}
+
+function equipCost(a, b, levelsToBuy = 1) {
+    var c = parseFloat(getBuildingItemPrice(a, b.Resource, b.Equip, levelsToBuy));
+    return c = b.Equip ? Math.ceil(c * Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.level)) : Math.ceil(c * Math.pow(1 - game.portal.Resourceful.modifier, game.portal.Resourceful.level)), c
+}
 
 function evaluateEquipmentEfficiency(equipName) {
     var equip = equipmentList[equipName];
@@ -108,8 +120,8 @@ function evaluateEquipmentEfficiency(equipName) {
             equip.Stat = 'health';
         }
     }
-    var Effect = equipEffect(gameResource, equip);
-    var Cost = equipCost(gameResource, equip);
+    var Effect = equipEffect(gameResource, equip, getPageSetting('gearamounttobuy'));
+    var Cost = equipCost(gameResource, equip, getPageSetting('gearamounttobuy'));
     var Factor = Effect / Cost;
     var StatusBorder = 'white';
     var Wall = false;
@@ -130,13 +142,14 @@ function evaluateEquipmentEfficiency(equipName) {
 
         if (!CanAfford) {
             StatusBorder = 'yellow';
-        } else {
+        }
+        else {
             if (!equip.Equip) {
 
                 StatusBorder = 'red';
             } else {
-                var CurrEffect = gameResource.level * Effect;
-                var NeedLevel = Math.ceil(CurrEffect / NextEffect);
+                var CurrEffect = gameResource.level * Effect / getPageSetting('gearamounttobuy');
+                var NeedLevel = ceilToNearestMultipleOf(CurrEffect / NextEffect, getPageSetting('gearamounttobuy'), 1)
                 var Ratio = gameResource.cost[equip.Resource][1];
                 var NeedResource = NextCost * (Math.pow(Ratio, NeedLevel) - 1) / (Ratio - 1);
                 if (game.resources[equip.Resource].owned > NeedResource) {
@@ -170,9 +183,7 @@ function evaluateEquipmentEfficiency(equipName) {
     if (gameResource.level < 2 && getPageSetting('always2') == true) {
         Factor = 999 - gameResource.prestige;
     }
-    if (equipName == 'Shield' && gameResource.blockNow &&
-        game.upgrades['Gymystic'].allowed - game.upgrades['Gymystic'].done > 0) {
-        needGymystic = true;
+    if (equipName == 'Shield' && gameResource.blockNow && needGymystic()) {
         Factor = 0;
         Wall = true;
         StatusBorder = 'orange';
@@ -192,12 +203,12 @@ var Best;
 function orangewindstack(){(9<game.equipment.Dagger.level&&0==game.upgrades.Dagadder.locked&&buyUpgrade('Dagadder',!0,!0),9<game.equipment.Mace.level&&0==game.upgrades.Megamace.locked&&buyUpgrade('Megamace',!0,!0),9<game.equipment.Polearm.level&&0==game.upgrades.Polierarm.locked&&buyUpgrade('Polierarm',!0,!0),9<game.equipment.Battleaxe.level&&0==game.upgrades.Axeidic.locked&&buyUpgrade('Axeidic',!0,!0),9<game.equipment.Greatsword.level&&0==game.upgrades.Greatersword.locked&&buyUpgrade('Greatersword',!0,!0),9<game.equipment.Arbalest.level&&0==game.upgrades.Harmbalest.locked&&buyUpgrade('Harmbalest',!0,!0),0==game.upgrades.Bootboost.locked&&buyUpgrade('Bootboost',!0,!0),0==game.upgrades.Hellishmet.locked&&buyUpgrade('Hellishmet',!0,!0),0==game.upgrades.Pantastic.locked&&buyUpgrade('Pantastic',!0,!0),0==game.upgrades.Smoldershoulder.locked&&buyUpgrade('Smoldershoulder',!0,!0),0==game.upgrades.Bestplate.locked&&buyUpgrade('Bestplate',!0,!0),0==game.upgrades.GambesOP.locked&&buyUpgrade('GambesOP',!0,!0),0==game.upgrades.Supershield.locked&&buyUpgrade('Supershield',!0,!0))}
 function dorangewindstack(){(9<game.equipment.Dagger.level&&0==game.upgrades.Dagadder.locked&&buyUpgrade('Dagadder',!0,!0),9<game.equipment.Mace.level&&0==game.upgrades.Megamace.locked&&buyUpgrade('Megamace',!0,!0),9<game.equipment.Polearm.level&&0==game.upgrades.Polierarm.locked&&buyUpgrade('Polierarm',!0,!0),9<game.equipment.Battleaxe.level&&0==game.upgrades.Axeidic.locked&&buyUpgrade('Axeidic',!0,!0),9<game.equipment.Greatsword.level&&0==game.upgrades.Greatersword.locked&&buyUpgrade('Greatersword',!0,!0),9<game.equipment.Arbalest.level&&0==game.upgrades.Harmbalest.locked&&buyUpgrade('Harmbalest',!0,!0),0==game.upgrades.Bootboost.locked&&buyUpgrade('Bootboost',!0,!0),0==game.upgrades.Hellishmet.locked&&buyUpgrade('Hellishmet',!0,!0),0==game.upgrades.Pantastic.locked&&buyUpgrade('Pantastic',!0,!0),0==game.upgrades.Smoldershoulder.locked&&buyUpgrade('Smoldershoulder',!0,!0),0==game.upgrades.Bestplate.locked&&buyUpgrade('Bestplate',!0,!0),0==game.upgrades.GambesOP.locked&&buyUpgrade('GambesOP',!0,!0),0==game.upgrades.Supershield.locked&&buyUpgrade('Supershield',!0,!0))}
 
-function windstackingprestige() {
+function windstackingprestige(hdStats) {
     if (
-		(game.global.challengeActive != "Daily" && getEmpowerment() == "Wind" && getPageSetting('WindStackingMin') > 0 && game.global.world >= getPageSetting('WindStackingMin') && calcHDratio() < 5) || 
-		(game.global.challengeActive == "Daily" && getEmpowerment() == "Wind" && getPageSetting('dWindStackingMin') > 0 && game.global.world >= getPageSetting('dWindStackingMin') && calcHDratio() < 5) || 
-		(game.global.challengeActive != "Daily" && getPageSetting('wsmax') > 0 && getPageSetting('wsmaxhd') > 0 && game.global.world >= getPageSetting('wsmax') && calcHDratio() < getPageSetting('wsmaxhd')) || 
-		(game.global.challengeActive == "Daily" && getPageSetting('dwsmax') > 0 && getPageSetting('dwsmaxhd') > 0 && game.global.world >= getPageSetting('dwsmax') && calcHDratio() < getPageSetting('dwsmaxhd'))
+		(game.global.challengeActive != "Daily" && getEmpowerment() == "Wind" && getPageSetting('WindStackingMin') > 0 && game.global.world >= getPageSetting('WindStackingMin') && hdStats.hdRatio < 5) ||
+		(game.global.challengeActive == "Daily" && getEmpowerment() == "Wind" && getPageSetting('dWindStackingMin') > 0 && game.global.world >= getPageSetting('dWindStackingMin') && hdStats.hdRatio < 5) ||
+		(game.global.challengeActive != "Daily" && getPageSetting('wsmax') > 0 && getPageSetting('wsmaxhd') > 0 && game.global.world >= getPageSetting('wsmax') && hdStats.hdRatio < getPageSetting('wsmaxhd')) ||
+		(game.global.challengeActive == "Daily" && getPageSetting('dwsmax') > 0 && getPageSetting('dwsmaxhd') > 0 && game.global.world >= getPageSetting('dwsmax') && hdStats.hdRatio < getPageSetting('dwsmaxhd'))
 	) {
 	if (game.global.challengeActive != "Daily") orangewindstack();
 	if (game.global.challengeActive == "Daily") dorangewindstack();
@@ -231,8 +242,52 @@ function postBuy3() {
     game.global.lastCustomAmt = preBuyCustomLast2;
 }
 
-function autoLevelEquipment() {
+function countPrestigesInMap() {
+    const map = (game.global.mapsActive ? getCurrentMapObject() : lastMapWeWereIn);
+    return (map ? addSpecials(true, true, map) : 0);
+}
 
+function mapLevelHasPrestiges(level) {
+    for (const eq of Object.values(equipmentList)) {
+        if (!eq.Equip) {
+            continue;
+        }
+        const prestigeUnlock = game.mapUnlocks[eq.Upgrade];
+        const pMapLevel = prestigeUnlock.last + 5;
+        if (game.upgrades[eq.Upgrade].allowed && prestigeUnlock && pMapLevel <= level) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function armorCapped() {
+    var capped = areWeHealthLevelCapped();
+
+    const prestigeList = ['Bootboost', 'Hellishmet', 'Pantastic', 'Smoldershoulder', 'Greatersword', 'GambesOP'];
+    var numUnbought = 0;
+    for (var i = 0, len = prestigeList.length; i < len; i++) {
+        var p = prestigeList[i];
+        if (game.upgrades[p].allowed - game.upgrades[p].done > 0)
+            numUnbought++;
+    }
+    return capped && countPrestigesInMap() === 0 && numUnbought === 0;
+}
+
+function weaponCapped() {
+    var capped = areWeAttackLevelCapped();
+
+    const prestigeList = ['Dagadder', 'Megamace', 'Polierarm', 'Axeidic', 'Greatersword', 'Harmbalest'];
+    var numUnbought = 0;
+    for (var i = 0, len = prestigeList.length; i < len; i++) {
+        var p = prestigeList[i];
+        if (game.upgrades[p].allowed - game.upgrades[p].done > 0)
+            numUnbought++;
+    }
+    return capped && countPrestigesInMap() === 0 && numUnbought === 0;
+}
+
+function autoLevelEquipment(hdStats, vmStatus) {
     var gearamounttobuy = (getPageSetting('gearamounttobuy') > 0) ? getPageSetting('gearamounttobuy') : 1;
 
     //WS
@@ -242,7 +297,7 @@ function autoLevelEquipment() {
     if (getEmpowerment() == 'Wind' && game.global.challengeActive == "Daily" && !game.global.runningChallengeSquared && (getPageSetting("AutoStance") == 3 || getPageSetting("use3daily") == true) && getPageSetting("dWindStackingMin") > 0 && game.global.world >= getPageSetting("dWindStackingMin") && getPageSetting("dwindcutoff") > 0)
         enoughDamageCutoff = getPageSetting("dwindcutoff");
 
-    if (calcOurDmg("avg", false, true) <= 0) return;
+    if (calcOurDmg() <= 0) return;
     resourcesNeeded = {
         "food": 0,
         "wood": 0,
@@ -261,37 +316,23 @@ function autoLevelEquipment() {
             Cost: 0
         };
     }
-    var ourDamage = calcOurDmg("avg", false, true);
-    var mapbonusmulti = 1 + (0.20 * game.global.mapBonus);
-    if (game.global.mapBonus > 0) {
-        ourDamage *= mapbonusmulti;
-    }
-    if (game.global.challengeActive == 'Lead') {
-        if (game.global.world % 2 == 1 && game.global.world != 179) {
-            ourDamage /= 1.5;
-        }
-    }
-    //Shield
-    highDamageShield();
-    if (getPageSetting('loomswap') > 0 && game.global.challengeActive != "Daily" && game.global.ShieldEquipped.name != getPageSetting('highdmg'))
-	ourDamage *= trimpAA;
-    if (getPageSetting('dloomswap') > 0 && game.global.challengeActive == "Daily" && game.global.ShieldEquipped.name != getPageSetting('dhighdmg'))
-	ourDamage *= trimpAA;
 
+    //Check for H & D
+    var formation = (game.global.world < 60 || game.global.highestLevelCleared < 180) ? "X" : "S";
+    var enoughDamageE = enoughDamage && oneShotZone(game.global.world, hdStats.targetZoneType, formation) >= 1;
+    var enoughHealthE = hdStats.hitsSurvived > getMapHealthCutOff(vmStatus) * MODULES.equipment.numHitsMult;
 
-    var enemyDamage = calcBadGuyDmg(null, getEnemyMaxAttack(game.global.world + 1, 50, 'Snimp', 1.0), true, true);
-    var enemyHealth = calcEnemyHealth();
-    var pierceMod = (game.global.brokenPlanet && !game.global.mapsActive) ? getPierceAmt() : 0;
-    var numHits = MODULES["equipment"].numHitsSurvived;
-    var enoughHealthE = (calcOurHealth(true) > numHits * (enemyDamage - calcOurBlock(true) > 0 ? enemyDamage - calcOurBlock(true) : enemyDamage * pierceMod));
-    var enoughDamageE = (ourDamage * enoughDamageCutoff > enemyHealth);
-
+    //Check mirror dailies
+    var mirroredDaily = game.global.challengeActive == "Daily" && typeof game.global.dailyChallenge.mirrored !== "undefined";
+    var mirroredDailyOk = !MODULES.equipment.mirroredDailyCap || !mirroredDaily || oneShotPower() < maxOneShotPower(true) || !enoughDamage;
+    
+    //For each equipment...
     for (var equipName in equipmentList) {
         var equip = equipmentList[equipName];
         var gameResource = equip.Equip ? game.equipment[equipName] : game.buildings[equipName];
         if (!gameResource.locked) {
             var $equipName = document.getElementById(equipName);
-            $equipName.style.color = 'white';
+            UpdateEquipColor($equipName, 'white');
             var evaluation = evaluateEquipmentEfficiency(equipName);
             var BKey = equip.Stat + equip.Resource;
 
@@ -305,43 +346,37 @@ function autoLevelEquipment() {
             resourcesNeeded[equip.Resource] += Best[BKey].Cost;
 
             if (evaluation.Wall)
-                $equipName.style.color = 'yellow';
-            $equipName.style.border = '1px solid ' + evaluation.StatusBorder;
+                UpdateEquipColor($equipName, 'yellow');
+            UpdateEquipBorder($equipName, '1px solid ' + evaluation.StatusBorder);
 
             var $equipUpgrade = document.getElementById(equip.Upgrade);
             if (evaluation.StatusBorder != 'white' && evaluation.StatusBorder != 'yellow' && $equipUpgrade)
-                $equipUpgrade.style.color = evaluation.StatusBorder;
+                UpdateEquipColor($equipUpgrade, evaluation.StatusBorder);
             if (evaluation.StatusBorder == 'yellow' && $equipUpgrade)
-                $equipUpgrade.style.color = 'white';
-            if (equipName == 'Gym' && needGymystic) {
-                $equipName.style.color = 'white';
-                $equipName.style.border = '1px solid white';
+                UpdateEquipColor($equipUpgrade, 'white');
+            if (equipName == 'Gym' && needGymystic()) {
+                UpdateEquipColor($equipName, 'white');
+                UpdateEquipBorder($equipName, '1px solid white');
                 if ($equipUpgrade) {
-                    $equipUpgrade.style.color = 'red';
-                    $equipUpgrade.style.border = '2px solid red';
+                    UpdateEquipColor($equipUpgrade, 'red');
+                    UpdateEquipBorder($equipUpgrade, '2px solid red');
                 }
             }
 
-            if (evaluation.StatusBorder == 'red' && windstackingprestige() && !(game.global.world < 60 && game.global.world >= 58 && MODULES["equipment"].waitTill60)) {
+            if (evaluation.StatusBorder == 'red' && windstackingprestige(hdStats) && !(game.global.world < 60 && game.global.world >= 58 && MODULES["equipment"].waitTill60)) {
                 var BuyWeaponUpgrades = ((getPageSetting('BuyWeaponsNew') == 1) || (getPageSetting('BuyWeaponsNew') == 2));
                 var BuyArmorUpgrades = ((getPageSetting('BuyArmorNew') == 1) || (getPageSetting('BuyArmorNew') == 2));
                 var DelayArmorWhenNeeded = getPageSetting('DelayArmorWhenNeeded');
+                var equipStat = equipmentList[equipName].Stat;
 
-                if (
-                    (BuyWeaponUpgrades && equipmentList[equipName].Stat == 'attack') ||
-                    (BuyWeaponUpgrades && equipmentList[equipName].Stat == 'block') ||
-                    (BuyArmorUpgrades && equipmentList[equipName].Stat == 'health' &&
-                        (
-                            (DelayArmorWhenNeeded && !shouldFarm) ||
-                            (DelayArmorWhenNeeded && enoughDamageE) ||
-                            (DelayArmorWhenNeeded && !enoughDamageE && !enoughHealthE) ||
-                            (DelayArmorWhenNeeded && equipmentList[equipName].Resource == 'wood') ||
-                            (!DelayArmorWhenNeeded)
-                        )
-                    )
-                )
+                //Delay Weapon Prestiges on Mirrored Dailies
+                BuyWeaponUpgrades &= mirroredDailyOk;
 
-                {
+                //Delays Armor Prestiges if lacking damage to advance, but not health. Never delays shield prestiges tho.
+                BuyArmorUpgrades &= DelayArmorWhenNeeded || !enoughHealth || enoughDamage || equipmentList[equipName].Resource == "wood";
+
+                //Buy Prestiges
+                if (BuyWeaponUpgrades && equipStat == "attack" || BuyArmorUpgrades && (equipStat == "health" || equipStat == "block")) {
                     var upgrade = equipmentList[equipName].Upgrade;
                     if (upgrade != "Gymystic")
                         debug('Upgrading ' + upgrade + " - Prestige " + game.equipment[equipName].prestige, "equips", '*upload');
@@ -349,8 +384,8 @@ function autoLevelEquipment() {
                         debug('Upgrading ' + upgrade + " # " + game.upgrades[upgrade].allowed, "equips", '*upload');
                     buyUpgrade(upgrade, true, true);
                 } else {
-                    $equipName.style.color = 'orange';
-                    $equipName.style.border = '2px solid orange';
+                    UpdateEquipColor($equipName, 'orange');
+                    UpdateEquipBorder($equipName, '2px solid orange');
                 }
             }
         }
@@ -364,16 +399,16 @@ function autoLevelEquipment() {
         if (eqName !== '') {
             var $eqName = document.getElementById(eqName);
             var DaThing = equipmentList[eqName];
-            if (eqName == 'Gym' && needGymystic) {
-                $eqName.style.color = 'white';
-                $eqName.style.border = '1px solid white';
+            if (eqName == 'Gym' && needGymystic()) {
+                UpdateEquipColor($eqName, 'white');
+                UpdateEquipBorder($eqName,'1px solid white');
                 continue;
             } else {
-                $eqName.style.color = Best[stat].Wall ? 'orange' : 'red';
-                $eqName.style.border = '2px solid red';
+                UpdateEquipColor($eqName, Best[stat].Wall ? 'orange' : 'red');
+                UpdateEquipBorder($eqName,'2px solid red');
             }
             var maxmap = getPageSetting('MaxMapBonusAfterZone') && doMaxMapBonus;
-            if (BuyArmorLevels && (DaThing.Stat == 'health' || DaThing.Stat == 'block') && (!enoughHealthE || maxmap)) {
+            if (BuyArmorLevels && (DaThing.Stat == 'health' || DaThing.Stat == 'block') && (!enoughHealth || !enoughHealthE && enoughDamage || maxmap)) {
                 game.global.buyAmt = gearamounttobuy;
                 if (DaThing.Equip && !Best[stat].Wall && canAffordBuilding(eqName, null, null, true)) {
                     debug('Leveling equipment ' + eqName, "equips", '*upload3');
@@ -388,7 +423,7 @@ function autoLevelEquipment() {
                     buyEquipment(eqName, null, true);
                 }
             }
-            if (windstackingprestige() && BuyWeaponLevels && DaThing.Stat == 'attack' && (!enoughDamageE || enoughHealthE || maxmap)) {
+            if (windstackingprestige(hdStats) && BuyWeaponLevels && DaThing.Stat == 'attack' && mirroredDailyOk && (!enoughDamageE || enoughHealthE || maxmap)) {
                 game.global.buyAmt = gearamounttobuy;
                 if (DaThing.Equip && !Best[stat].Wall && canAffordBuilding(eqName, null, null, true)) {
                     debug('Leveling equipment ' + eqName, "equips", '*upload3');
@@ -400,6 +435,7 @@ function autoLevelEquipment() {
     postBuy3();
 }
 function areWeAttackLevelCapped(){var a=[];for(var b in equipmentList){var c=equipmentList[b],d=c.Equip?game.equipment[b]:game.buildings[b];if(!d.locked){var e=evaluateEquipmentEfficiency(b);"attack"==e.Stat&&a.push(e)}}return a.every(f=>0==f.Factor&&!0==f.Wall)}
+function areWeHealthLevelCapped(){var a=[];for(var b in equipmentList){var c=equipmentList[b],d=c.Equip?game.equipment[b]:game.buildings[b];if(!d.locked){var e=evaluateEquipmentEfficiency(b);"health"==e.Stat&&"metal"==c.Resource&&a.push(e)}}return a.every(f=>0==f.Factor&&!0==f.Wall)}
 
 //Radon
 
@@ -642,7 +678,7 @@ function RautoLevelEquipment() {
         var gameResource = game.equipment[equipName];
         if (!gameResource.locked) {
             var $equipName = document.getElementById(equipName);
-            $equipName.style.color = 'white';
+            UpdateEquipColor($equipName, 'white');
             var evaluation = RevaluateEquipmentEfficiency(equipName);
             var BKey = equip.Stat + equip.Resource;
 
@@ -656,14 +692,14 @@ function RautoLevelEquipment() {
             RresourcesNeeded[equip.Resource] += RBest[BKey].Cost;
 
             if (evaluation.Wall)
-                $equipName.style.color = 'yellow';
-            $equipName.style.border = '1px solid ' + evaluation.StatusBorder;
+                UpdateEquipColor($equipName, 'yellow');
+            UpdateEquipBorder($equipName, '1px solid ' + evaluation.StatusBorder);
 
             var $equipUpgrade = document.getElementById(equip.Upgrade);
             if (evaluation.StatusBorder != 'white' && evaluation.StatusBorder != 'yellow' && $equipUpgrade)
-                $equipUpgrade.style.color = evaluation.StatusBorder;
+                UpdateEquipColor($equipUpgrade, evaluation.StatusBorder);
             if (evaluation.StatusBorder == 'yellow' && $equipUpgrade)
-                $equipUpgrade.style.color = 'white';
+                UpdateEquipColor($equipUpgrade, 'white');
             if (evaluation.StatusBorder == 'red') {
                 var BuyWeaponUpgrades = ((getPageSetting('RBuyWeaponsNew') == 1) || (getPageSetting('RBuyWeaponsNew') == 2));
                 var BuyArmorUpgrades = ((getPageSetting('RBuyArmorNew') == 1) || (getPageSetting('RBuyArmorNew') == 2));
@@ -687,8 +723,8 @@ function RautoLevelEquipment() {
                     debug('Upgrading ' + upgrade + " - Prestige " + game.equipment[equipName].prestige, "equips", '*upload');
                     buyUpgrade(upgrade, true, true);
                 } else {
-                    $equipName.style.color = 'orange';
-                    $equipName.style.border = '2px solid orange';
+                    UpdateEquipColor($equipName, 'orange');
+                    UpdateEquipBorder($equipName, '2px solid orange');
                 }
             }
         }
@@ -702,8 +738,8 @@ function RautoLevelEquipment() {
         if (eqName !== '') {
             var $eqName = document.getElementById(eqName);
             var DaThing = RequipmentList[eqName];
-            $eqName.style.color = RBest[stat].Wall ? 'orange' : 'red';
-            $eqName.style.border = '2px solid red';
+            UpdateEquipColor($eqName, RBest[stat].Wall ? 'orange' : 'red');
+            UpdateEquipBorder($eqName,'2px solid red');
             var maxmap = getPageSetting('RMaxMapBonusAfterZone') && RdoMaxMapBonus;
             if (BuyArmorLevels && DaThing.Stat == 'health' && (!enoughHealthE || maxmap)) {
                 game.global.buyAmt = Rgearamounttobuy
@@ -964,8 +1000,8 @@ function buyPrestigeMaybe(equipName) {
     var newStatValue = (newLevel) * Math.round(equipment[equipStat] * Math.pow(1.19, ((equipment.prestige + 1) * game.global.prestige[equipStat]) + 1));
     var currentStatValue = equipment.level * equipment[equipStat + 'Calculated'];
 
-    return newStatValue > currentStatValue 
-    
+    return newStatValue > currentStatValue
+
 }
 
 function RautoEquip() {
@@ -999,7 +1035,7 @@ function RautoEquip() {
             if (game.equipment[equip].level < 2) {
                 buyEquipment(equip, null, true, 1);
             }
-        } 
+        }
     }
 
     // Loop through actually getting equips
@@ -1022,7 +1058,7 @@ function RautoEquip() {
                         if (
                             zoneGo ||
                             underStats ||
-                            Rgetequipcost(equipName, resourceUsed, 1) <= resourceMaxPercent * game.resources[resourceUsed].owned 
+                            Rgetequipcost(equipName, resourceUsed, 1) <= resourceMaxPercent * game.resources[resourceUsed].owned
                         ) {
 			    if (game.global.challengeActive == "Hypothermia" && equipName == 'Shield' && !Rhyposhouldwood) return;
                             else if (!game.equipment[equipName].locked) {
@@ -1070,7 +1106,7 @@ function equipfarmdynamicHD() {
     }
     return equipfarmHDmult;
 }
-	
+
 function estimateEquipsForZone() {
     var artBoost = Math.pow(1 - game.portal.Artisanistry.modifier, game.portal.Artisanistry.radLevel);
 	artBoost *= autoBattle.oneTimers.Artisan.owned ? autoBattle.oneTimers.Artisan.getMult() : 1;
@@ -1150,4 +1186,16 @@ function estimateEquipsForZone() {
 
     return [totalCost, bonusLevels, tempEqualityUse];
     
+}
+
+function UpdateEquipColor(equip, color) {
+    if (!usingRealTimeOffline) {
+        equip.style.color = color;
+    }
+}
+
+function UpdateEquipBorder(equip, border) {
+    if (!usingRealTimeOffline) {
+        equip.style.border = border;
+    }
 }

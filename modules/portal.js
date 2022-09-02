@@ -86,37 +86,36 @@ function dailyAutoPortal() {
             var bestHeHrZone = game.stats.bestHeliumHourThisRun.atZone;
             var myHeliumHr = game.stats.heliumHour.value();
             var heliumHrBuffer = Math.abs(getPageSetting('dHeliumHrBuffer'));
-            if (!aWholeNewWorld) {
+            if (!aWholeNewWorld)
                 heliumHrBuffer *= MODULES["portal"].bufferExceedFactor;
-                var bufferExceeded = myHeliumHr < bestHeHr * (1 - (heliumHrBuffer / 100));
-                if (bufferExceeded && game.global.world >= minZone) {
-                    OKtoPortal = true;
-                    if (aWholeNewWorld)
-                        zonePostpone = 0;
-                }
-                if (heliumHrBuffer == 0 && !aWholeNewWorld)
-                    OKtoPortal = false;
-                if (OKtoPortal && zonePostpone == 0) {
-                    zonePostpone += 1;
-                    debug("My HeliumHr was: " + myHeliumHr + " & the Best HeliumHr was: " + bestHeHr + " at zone: " + bestHeHrZone, "portal");
-                    cancelTooltip();
-                    tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1', '<b>NOTICE: Auto-Portaling in 5 seconds....</b>', 'Delay Portal');
-                    setTimeout(cancelTooltip, MODULES["portal"].timeout);
-                    setTimeout(function() {
-                        if (zonePostpone >= 2)
-                            return;
-                        if (OKtoPortal) {
-                            abandonDaily();
-                            document.getElementById('finishDailyBtnContainer').style.display = 'none';
-                        }
-                        if (autoTrimpSettings.dHeliumHourChallenge.selected != 'None' && getPageSetting('u1daily') == false)
-                            doPortal(autoTrimpSettings.dHeliumHourChallenge.selected);
-			else if (autoTrimpSettings.RdHeliumHourChallenge.selected != 'None' && getPageSetting('u1daily') == true)
-                            doPortal(autoTrimpSettings.RdHeliumHourChallenge.selected);
-                        else
-                            doPortal();
-                    }, MODULES["portal"].timeout + 100);
-                }
+            var bufferExceeded = myHeliumHr < bestHeHr * (1 - (heliumHrBuffer / 100));
+            if (bufferExceeded && game.global.world >= minZone) {
+                OKtoPortal = true;
+                if (aWholeNewWorld)
+                    zonePostpone = 0;
+            }
+            if (heliumHrBuffer == 0 && !aWholeNewWorld)
+                OKtoPortal = false;
+            if (OKtoPortal && zonePostpone == 0) {
+                zonePostpone += 1;
+                debug("My HeliumHr was: " + myHeliumHr + " & the Best HeliumHr was: " + bestHeHr + " at zone: " + bestHeHrZone, "portal");
+                cancelTooltip();
+                tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1', '<b>NOTICE: Auto-Portaling in 5 seconds....</b>', 'Delay Portal');
+                setTimeout(cancelTooltip, MODULES["portal"].timeout);
+                setTimeout(function() {
+                    if (zonePostpone >= 2)
+                        return;
+                    if (OKtoPortal) {
+                        abandonDaily();
+                        document.getElementById('finishDailyBtnContainer').style.display = 'none';
+                    }
+                    if (autoTrimpSettings.dHeliumHourChallenge.selected != 'None' && getPageSetting('u1daily') == false)
+                        doPortal(autoTrimpSettings.dHeliumHourChallenge.selected);
+                    else if (autoTrimpSettings.RdHeliumHourChallenge.selected != 'None' && getPageSetting('u1daily') == true)
+                        doPortal(autoTrimpSettings.RdHeliumHourChallenge.selected);
+                    else
+                        doPortal();
+                }, MODULES["portal"].timeout + 100);
             }
         }
     }
@@ -136,19 +135,18 @@ function dailyAutoPortal() {
 }
 
 function c2runnerportal() {
-            if (game.global.world > getPageSetting('c2runnerportal')) {
-                if (game.global.runningChallengeSquared)
-                    abandonChallenge();
-                if (autoTrimpSettings.HeliumHourChallenge.selected != 'None')
-                    doPortal(autoTrimpSettings.HeliumHourChallenge.selected);
-                else
-                    doPortal();
-            }
+    if (game.global.world >= getPageSetting('c2runnerportal')) {
+        if (game.global.runningChallengeSquared)
+            abandonChallenge();
+        if (autoTrimpSettings.HeliumHourChallenge.selected != 'None')
+            doPortal(autoTrimpSettings.HeliumHourChallenge.selected);
+        else
+            doPortal();
+    }
 }
 
 function c2runner() {
-   
-if (!game.global.portalActive) return;
+    if (!game.global.portalActive) return;
     if (getPageSetting('c2runnerstart') == true && getPageSetting('c2runnerportal') > 0 && getPageSetting('c2runnerpercent') > 0) {
             if (game.global.highestLevelCleared > 34 && (100*(game.c2.Size/(game.global.highestLevelCleared+1))) < getPageSetting('c2runnerpercent')) {
                 challengeSquaredMode = true;
@@ -210,33 +208,33 @@ if (!game.global.portalActive) return;
 
 function doPortal(challenge) {
     var c2done = true;
-    if(!game.global.portalActive) return;
+    if (!game.global.portalActive) return;
     if (getPageSetting('spendmagmite')==1) {
-	autoMagmiteSpender();
+	    autoMagmiteSpender();
     }
     if (getPageSetting('autoheirlooms') == true && getPageSetting('typetokeep') != 'None' && getPageSetting('raretokeep') != 'None') {
-	autoheirlooms3();
+	    autoheirlooms3();
     }
     if (game.global.ShieldEquipped.name != getPageSetting('highdmg') || game.global.ShieldEquipped.name != getPageSetting('dhighdmg')) {
         if (highdmgshield() != undefined) {
-	    selectHeirloom(game.global.heirloomsCarried.indexOf(loom), "heirloomsCarried", true);
-	    equipHeirloom();
-	}
+	        selectHeirloom(game.global.heirloomsCarried.indexOf(loom), "heirloomsCarried", true);
+	        equipHeirloom();
+	    }
     }
     /*if (getPageSetting('autonu') == true && getPageSetting('heirloomnu') != undefined) {
         spendNu(); spendNu(); spendNu(); spendNu(); spendNu(); spendNu();
     }*/
     if (getPageSetting('AutoAllocatePerks')==2) {
         viewPortalUpgrades();
-	numTab(6, true)
-	buyPortalUpgrade('Looting_II');
-	activateClicked();
-	cancelPortal();
-	debug('First Stage: Bought Max Looting II');
+	    numTab(6, true)
+	    buyPortalUpgrade('Looting_II');
+	    activateClicked();
+	    cancelPortal();
+	    debug('First Stage: Bought Max Looting II');
     }
     portalClicked();
     if (!portalWindowOpen) {
-	portalClicked();
+	    portalClicked();
     }
     if (portalWindowOpen && getPageSetting('AutoAllocatePerks')==1 && (typeof MODULES["perks"] !== 'undefined' || typeof AutoPerks !== 'undefined')) {
         AutoPerks.clickAllocate();
@@ -249,32 +247,31 @@ function doPortal(challenge) {
         else debug("C2 Runner: All C2s above Threshold!");
     }
     if (portalWindowOpen && getPageSetting('AutoStartDaily') == true && c2done) {
-	if (getPageSetting('u2daily') == true && portalUniverse == 1) {
-	    swapPortalUniverse();
-	}
-        selectChallenge('Daily');
-        checkCompleteDailies();
-        var lastUndone = -7;
-        while (++lastUndone <= 0) {
-            var done = (game.global.recentDailies.indexOf(getDailyTimeString(lastUndone)) != -1);
-            if (!done)
-                break;
-        }
-        if (lastUndone == 1) {
-            debug("All available Dailies already completed.", "portal");
-	    if ((getPageSetting('u1daily') == true && portalUniverse == 1 && challenge == autoTrimpSettings.RdHeliumHourChallenge.selected) || (getPageSetting('u2daily') == true && portalUniverse == 2)) {
+	    if (getPageSetting('u2daily') == true && portalUniverse == 1) {
 	        swapPortalUniverse();
 	    }
-            selectChallenge(challenge || 0);
+	    selectChallenge('Daily');
+	    checkCompleteDailies();
+	    var lastUndone = -7;
+	    while (++lastUndone <= 0) {
+	        var done = (game.global.recentDailies.indexOf(getDailyTimeString(lastUndone)) != -1);
+	        if (!done) break;
+	    }
+        if (lastUndone == 1) {
+            debug("All available Dailies already completed.", "portal");
+	        if ((getPageSetting('u1daily') == true && portalUniverse == 1 && challenge == autoTrimpSettings.RdHeliumHourChallenge.selected) || (getPageSetting('u2daily') == true && portalUniverse == 2)) {
+	            swapPortalUniverse();
+	        }
+	        selectChallenge(challenge || 0);
         } else {
             getDailyChallenge(lastUndone);
             debug("Portaling into Daily for: " + getDailyTimeString(lastUndone, true) + " now!", "portal");
         }
     }
     else if(portalWindowOpen && challenge && c2done) {
-	if (getPageSetting('u1daily') == true && portalUniverse == 1 && challenge == autoTrimpSettings.RdHeliumHourChallenge.selected) {
-	    swapPortalUniverse();
-	}
+	    if (getPageSetting('u1daily') == true && portalUniverse == 1 && challenge == autoTrimpSettings.RdHeliumHourChallenge.selected) {
+	        swapPortalUniverse();
+	    }
         selectChallenge(challenge);
     }
     if (portalWindowOpen && getPageSetting('AutoAllocatePerks')==2 && !game.portal.Looting_II.locked) {
@@ -285,6 +282,30 @@ function doPortal(challenge) {
     pushData();
     activatePortal();
     lastHeliumZone = 0; zonePostpone = 0;
+}
+
+function decaySkipMaps() {
+    if (game.global.challengeActive !== "Decay") {
+        return false;
+    }
+    const stacks = game.challenges.Decay ? game.challenges.Decay.stacks : 0;
+    const stacksToPush = getPageSetting('DecayStacksToPush');
+    return stacksToPush > 0 && stacks > stacksToPush;
+}
+
+function decayFinishChallenge() {
+    //Pre-Init
+    if (game.global.challengeActive !== "Decay") return;
+
+    //Init
+    let stacks = game.challenges.Decay ? game.challenges.Decay.stacks : 0;
+    let stacksToAbandon = getPageSetting('DecayStacksToAbandon');
+
+    //Finishes the challenge if above max stacks
+    if (stacksToAbandon > 0 && stacks > stacksToAbandon) {
+        abandonChallenge();
+        debug(`Finished Decay challenge because we had more than ${stacksToAbandon} stacks.`, "general", "oil");
+    }
 }
 
 function finishChallengeSquared(){var a=getPageSetting("FinishC2");game.global.world>=a&&(abandonChallenge(),debug("Finished challenge2 because we are on zone "+game.global.world,"other","oil"))}
@@ -398,7 +419,7 @@ function RdailyAutoPortal() {
                         }
                         if (autoTrimpSettings.RdHeliumHourChallenge.selected != 'None' && getPageSetting('u2daily') == false)
                             RdoPortal(autoTrimpSettings.RdHeliumHourChallenge.selected);
-			else if (autoTrimpSettings.dHeliumHourChallenge.selected != 'None' && getPageSetting('u2daily') == true)
+			            else if (autoTrimpSettings.dHeliumHourChallenge.selected != 'None' && getPageSetting('u2daily') == true)
                             RdoPortal(autoTrimpSettings.dHeliumHourChallenge.selected);
                         else
                             RdoPortal();
@@ -637,4 +658,5 @@ hypoprefragmappy=undefined;
 hypofragmappybought=false;
 Rhyposhouldwood=true;
 contractVoid=false;
+Rshouldtimefarmbogs = !1;
 };

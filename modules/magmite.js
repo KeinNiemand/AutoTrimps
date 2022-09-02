@@ -169,43 +169,72 @@ function autoMagmiteSpender() {
 }
 
 function autoGenerator() {
-var defaultgenstate = getPageSetting('defaultgen');
-var beforefuelstate = getPageSetting('beforegen');
-  if (game.global.world < 230) return;
-  if (game.global.dailyChallenge.seed && getPageSetting('AutoGenDC') == 1 && game.global.generatorMode != 1)
-      changeGeneratorState(1);
-  if (game.global.dailyChallenge.seed && getPageSetting('AutoGenDC') == 1 && game.global.generatorMode == 1)
-      return;
-  if (game.global.dailyChallenge.seed && getPageSetting('AutoGenDC') == 2 && game.global.generatorMode != 2)
-      changeGeneratorState(2);
-  if (game.global.dailyChallenge.seed && getPageSetting('AutoGenDC') == 2 && game.global.generatorMode == 2)
-      return;
-  if (game.global.runningChallengeSquared && getPageSetting('AutoGenC2') == 1 && game.global.generatorMode != 1)
-      changeGeneratorState(1);
-  if (game.global.runningChallengeSquared && getPageSetting('AutoGenC2') == 1 && game.global.generatorMode == 1)
-      return;
-  if (game.global.runningChallengeSquared && getPageSetting('AutoGenC2') == 2 && game.global.generatorMode != 2)
-      changeGeneratorState(2);
-  if (game.global.runningChallengeSquared && getPageSetting('AutoGenC2') == 2 && game.global.generatorMode == 2)
-      return;
-  if (getPageSetting('fuellater') < 1 && game.global.generatorMode != beforefuelstate)   
-      changeGeneratorState(beforefuelstate);
-  if (getPageSetting('fuellater') < 1 && game.global.generatorMode == beforefuelstate)
-      return;
-  if (getPageSetting('fuellater') >= 1 && game.global.world < getPageSetting('fuellater') && game.global.generatorMode != beforefuelstate)
-      changeGeneratorState(beforefuelstate);
-  if (getPageSetting('fuellater') >= 1 && game.global.world < getPageSetting('fuellater') && game.global.generatorMode == beforefuelstate)
-      return;
-  if (getPageSetting('fuellater') >= 1 && game.global.world >= getPageSetting('fuellater') && game.global.world < getPageSetting('fuelend') && game.global.generatorMode != 1)
-      changeGeneratorState(1);
-  if (getPageSetting('fuellater') >= 1 && game.global.world >= getPageSetting('fuellater') && game.global.world < getPageSetting('fuelend') && game.global.generatorMode == 1)
-      return;
-  if (getPageSetting('fuelend') < 1 && game.global.world >= getPageSetting('fuellater') && game.global.generatorMode != 1)
-      changeGeneratorState(1);
-  if (getPageSetting('fuelend') < 1 && game.global.world >= getPageSetting('fuellater') && game.global.generatorMode == 1)
-      return;
-  if (getPageSetting('fuelend') >= 1 && game.global.world >= getPageSetting('fuelend') && game.global.generatorMode != defaultgenstate)
-      changeGeneratorState(defaultgenstate);
-  if (getPageSetting('fuelend') >= 1 && game.global.world >= getPageSetting('fuelend') && game.global.generatorMode == defaultgenstate)
-      return;
-  }
+    //Auto Fuel Zone
+    if (getPageSetting('AutoFuelZone')) {
+        //With Overclock - Auto Fuel Zone
+        if (game.generatorUpgrades.Overclocker.upgrades > 0) {
+            setPageSetting("fuellater", Math.max(230, 230 + 2 * game.generatorUpgrades.Supply.upgrades - getPageSetting('ZonesBeforeSupply')));
+            setPageSetting("fuelend", getPageSetting("fuellater") + getPageSetting('TotalZonesToFuel'));
+        }
+
+        //Without Overclock - Hybrid or Pseudo-Hybrid
+        else {
+            setPageSetting("fuellater", Math.max(230));
+            setPageSetting("fuelend", 230);
+            setPageSetting("beforegen", 2);
+            setPageSetting("defaultgen", 2);
+        }
+    }
+
+    //Scry starts alongside fueling. DieZ is updated if <= minZone
+    if (getPageSetting('ScryerMinAtFuel') && game.global.highestLevelCleared >= 240) {
+        var fuelZone = getPageSetting("fuellater");
+        setPageSetting("ScryerMinZone", Math.max(fuelZone, getPageSetting("ScryerMinZone")));
+        setPageSetting("ScryerDieZ", Math.max(fuelZone, getPageSetting("ScryerMinZone"), getPageSetting("ScryerDieZ")));
+    }
+
+    //Dimensional Generator locked
+    if (game.global.world < 230) return;
+
+    //Saves the user configuration
+    var beforeFuelState = getPageSetting("beforegen");
+    var afterFuelState = getPageSetting("defaultgen");
+
+    //Daily
+    if (game.global.challengeActive == "Daily" && getPageSetting("AutoGenDC") != 0) {
+        changeGeneratorState(getPageSetting("AutoGenDC"));
+        return;
+    }
+
+    //C2
+    if (game.global.runningChallengeSquared && getPageSetting("AutoGenC2") != 0) {
+        changeGeneratorState(getPageSetting("AutoGenC2"));
+        return;
+    }
+
+    //Before Fuel
+    if (getPageSetting("fuellater") < 0 || game.global.world < getPageSetting("fuellater")) {
+        //Pseudo-Hybrid. It fuels until full, then goes into Mi mode
+        if (getPageSetting("beforegen") == 2 && !game.permanentGeneratorUpgrades.Hybridization.owned) {
+            beforeFuelState = game.global.generatorMode;
+            if (game.global.world == 230 && game.global.lastClearedCell < 14) beforeFuelState = 1;
+            if (game.global.magmaFuel == getGeneratorFuelCap(false, true)) beforeFuelState = 0;
+        }
+        changeGeneratorState(beforeFuelState);
+    }
+
+    //Fuel
+    else if (getPageSetting("fuelend") < 0 || game.global.world < getPageSetting("fuelend"))
+        changeGeneratorState(1);
+
+    //After Fuel
+    else {
+        //Pseudo-Hybrid. It fuels until full, then goes into Mi mode
+        if (getPageSetting("defaultgen") == 2 && !game.permanentGeneratorUpgrades.Hybridization.owned) {
+            afterFuelState = game.global.generatorMode;
+            if (game.global.world == 230 && game.global.lastClearedCell < 14) afterFuelState = 1;
+            if (game.global.magmaFuel == getGeneratorFuelCap(false, true)) afterFuelState = 0;
+        }
+        changeGeneratorState(afterFuelState);
+    }
+}

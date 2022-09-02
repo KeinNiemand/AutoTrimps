@@ -4,7 +4,6 @@ MODULES["fight"].breedTimerCutoff2 = 0.5;
 MODULES["fight"].enableDebug = true;
 
 function betterAutoFight() {
-    var customVars = MODULES["fight"];
     if (game.global.autoBattle && !game.global.pauseFight)
         pauseFight();
     if (game.global.gridArray.length === 0 || game.global.preMapsActive || !game.upgrades.Battle.done) return;
@@ -19,12 +18,10 @@ function betterAutoFight() {
 }
 
 function betterAutoFight3() {
-    var customVars = MODULES["fight"];
-    if (game.global.autoBattle && game.global.pauseFight && !game.global.spireActive)
-        pauseFight();
-        if (game.global.gridArray.length === 0 || game.global.preMapsActive || !game.upgrades.Battle.done || game.global.fighting || game.global.spireActive)
-            return;
-        if (game.global.world == 1 && !game.global.fighting) {
-            fightManual();
-        }
+    if (game.global.autoBattle && game.global.pauseFight && !game.global.spireActive) pauseFight();
+    if (game.global.gridArray.length === 0 || game.global.preMapsActive || !game.upgrades.Battle.done || game.global.fighting || game.global.spireActive)
+        return;
+    if (game.global.world == 1 && !game.global.fighting && game.resources.trimps.owned >= game.resources.trimps.realMax()) {
+        fightManual();
+    }
 }

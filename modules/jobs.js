@@ -74,7 +74,7 @@ function safeFireJob(job, amount) {
 
 function buyJobs() {
     var freeWorkers = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
-    var breeding = (game.resources.trimps.owned - game.resources.trimps.employed);
+    var breeding = (game.resources.trimps.owned - trimpsEffectivelyEmployed());
     var totalDistributableWorkers = freeWorkers + game.jobs.Farmer.owned + game.jobs.Miner.owned + game.jobs.Lumberjack.owned;
     var farmerRatio = parseFloat(getPageSetting('FarmerRatio'));
     var lumberjackRatio = parseFloat(getPageSetting('LumberjackRatio'));
@@ -89,18 +89,15 @@ function buyJobs() {
     }
 
     if (game.global.world == 1 && game.global.totalHeliumEarned <= 5000) {
-        if (game.resources.trimps.owned < game.resources.trimps.realMax() * 0.9) {
-            if (game.resources.food.owned > 5 && freeWorkers > 0) {
-                if (game.jobs.Farmer.owned == game.jobs.Lumberjack.owned)
-                    safeBuyJob('Farmer', 1);
-                else if (game.jobs.Farmer.owned > game.jobs.Lumberjack.owned && !game.jobs.Lumberjack.locked)
-                    safeBuyJob('Lumberjack', 1);
-            }
-            freeWorkers = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
-            if (game.resources.food.owned > 20 && freeWorkers > 0) {
-                if (game.jobs.Farmer.owned == game.jobs.Lumberjack.owned && !game.jobs.Miner.locked && game.global.challengeActive != "Metal")
-                    safeBuyJob('Miner', 1);
-            }
+        if (game.resources.food.owned > 5 && freeWorkers > 0) {
+            if (!game.jobs.Scientist.locked && game.jobs.Scientist.owned < 2 && getPageSetting('MaxScientists') != 0)
+                safeBuyJob('Scientist', 1);
+            else if (!game.jobs.Miner.locked && game.jobs.Miner.owned < game.jobs.Lumberjack.owned)
+                safeBuyJob('Miner', 1);
+            else if (!game.jobs.Lumberjack.locked && game.jobs.Lumberjack.owned < game.jobs.Farmer.owned)
+                safeBuyJob('Lumberjack', 1);
+            else
+                safeBuyJob('Farmer', 1);
         }
         return;
     } else if (game.jobs.Farmer.owned == 0 && game.jobs.Lumberjack.locked && freeWorkers > 0) {
@@ -123,14 +120,11 @@ function buyJobs() {
                 return;
         }
     } else {
-        var breeding = (game.resources.trimps.owned - game.resources.trimps.employed);
         if (!(game.global.challengeActive == "Trapper") && game.resources.trimps.owned < game.resources.trimps.realMax() * 0.9 && !breedFire) {
             if (breeding > game.resources.trimps.realMax() * 0.33) {
                 freeWorkers = Math.ceil(game.resources.trimps.realMax() / 2) - game.resources.trimps.employed;
                 if (freeWorkers > 0 && game.resources.trimps.realMax() <= 3e5) {
-                    if (game.global.challengeActive != "Metal") {
-                        safeBuyJob('Miner', 1);
-                    }
+                    if (!game.jobs.Miner.locked) safeBuyJob('Miner', 1);
                     safeBuyJob('Farmer', 1);
                     safeBuyJob('Lumberjack', 1);
                 }
@@ -194,11 +188,15 @@ function buyJobs() {
         } else
             return false;
     }
-    ratiobuy('Farmer', farmerRatio);
-    if (!ratiobuy('Miner', minerRatio) && breedFire && game.global.turkimpTimer === 0 && game.global.challengeActive != "Metal")
-        safeBuyJob('Miner', game.jobs.Miner.owned * -1);
-    if (!ratiobuy('Lumberjack', lumberjackRatio) && breedFire)
-        safeBuyJob('Lumberjack', game.jobs.Lumberjack.owned * -1);
+
+    //FLM according to ratio, except when doing Trapper challenge (according to settings)
+    if (game.global.challengeActive != "Trapper" || !getPageSetting("buynojobsc")) {
+        ratiobuy('Farmer', farmerRatio);
+        if (!ratiobuy('Miner', minerRatio) && breedFire && game.global.turkimpTimer === 0)
+            safeBuyJob('Miner', game.jobs.Miner.owned * -1);
+        if (!ratiobuy('Lumberjack', lumberjackRatio) && breedFire)
+            safeBuyJob('Lumberjack', game.jobs.Lumberjack.owned * -1);
+    }
 
     if (game.jobs.Magmamancer.locked) return;
     var timeOnZone = Math.floor((new Date().getTime() - game.global.zoneStarted) / 60000);

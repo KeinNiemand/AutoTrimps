@@ -378,6 +378,7 @@ function gatherInfo() {
         if (allSaveData.length > 0 && allSaveData[allSaveData.length - 1].world != game.global.world) {
             pushData();
         }
+        GraphsVars.lastOVKBuffer = 0;
         GraphsVars.OVKcellsInWorld = 0;
         GraphsVars.ZoneStartTime = 0;
         GraphsVars.MapBonus = 0;
@@ -385,7 +386,15 @@ function gatherInfo() {
     if (game.options.menu.overkillColor.enabled == 0) toggleSetting("overkillColor");
     if (game.options.menu.liquification.enabled && game.talents.liquification.purchased && !game.global.mapsActive && game.global.gridArray && game.global.gridArray[0] && game.global.gridArray[0].name == "Liquimp")
         GraphsVars.OVKcellsInWorld = 100;
-    else GraphsVars.OVKcellsInWorld = document.getElementById("grid").getElementsByClassName("cellColorOverkill").length;
+    else {
+        //If we are at c100, then we didn't overkill at zone 99, and the assumption below must be nullified
+        if (GraphsVars.lastOVKBuffer > 0 && getCurrentWorldCell() && getCurrentWorldCell().level == 100) GraphsVars.OVKcellsInWorld = GraphsVars.lastOVKBuffer;
+        else GraphsVars.OVKcellsInWorld = document.getElementById("grid").getElementsByClassName("cellColorOverkill").length;
+
+        //At c99, it assumes that it will overkill
+        if (getCurrentWorldCell() && getCurrentWorldCell().level == 99) GraphsVars.lastOVKBuffer = GraphsVars.OVKcellsInWorld++;
+    }
+    
     GraphsVars.ZoneStartTime = new Date().getTime() - game.global.zoneStarted;
     GraphsVars.MapBonus = game.global.mapBonus;
 }
@@ -868,7 +877,7 @@ function setGraphData(graph) {
                 }
                 if (currentZone < allSaveData[i].world && currentZone != -1) {
                     var num = allSaveData[i].overkill;
-                    if (num) graphData[graphData.length - 1].data.push(num);
+                    if (num || num == 0) graphData[graphData.length - 1].data.push(num);
                 }
                 currentZone = allSaveData[i].world;
             }

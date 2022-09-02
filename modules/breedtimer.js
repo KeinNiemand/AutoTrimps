@@ -14,39 +14,112 @@ function trimpsEffectivelyEmployed() {
 
 var DecimalBreed = Decimal.clone({precision: 30, rounding: 4});
 var missingTrimps = new DecimalBreed(0);
-function ATGA2() {
+
+//Lowers breed timer proportionally to the amount of Momentum during Lead
+function customLeadTimer(hdStats) {
+    //If instakilling, timer = 30
+    var formation = game.upgrades.Dominance.done ? "D" : "X";
+    if (oneShotZone(game.global.world, hdStats.targetZoneType, formation)) return 30;
+
+    //Timer = 10 to 30, according to the number of stacks. Or from 5-30 if Scrying
+    if (game.global.formation != 4) return Math.min(30, 35 - game.challenges.Lead.stacks/8.0);
+    else return Math.min(30, 35 - 3.0 * game.challenges.Lead.stacks/20.0);
+}
+
+function trimpsEffectivelyEmployed() {
+    //Init
+    var employedTrimps = game.resources.trimps.employed;
+
+    //Multitasking
+    if (game.permaBoneBonuses.multitasking.owned)
+        employedTrimps *= (1 - game.permaBoneBonuses.multitasking.mult());
+
+    return employedTrimps;
+}
+
+function potencyMod() {
+    //Init
+    var trimps = game.resources.trimps;
+    var potencyMod = new DecimalBreed(trimps.potency);
+
+    //Potency, Nurseries, Venimp, Broken Planet
+    if (game.upgrades.Potency.done > 0) potencyMod = potencyMod.mul(Math.pow(1.1, game.upgrades.Potency.done));
+    if (game.buildings.Nursery.owned > 0) potencyMod = potencyMod.mul(Math.pow(1.01, game.buildings.Nursery.owned));
+    if (game.unlocks.impCount.Venimp > 0) potencyMod = potencyMod.mul(Math.pow(1.003, game.unlocks.impCount.Venimp));
+    if (game.global.brokenPlanet) potencyMod = potencyMod.div(10);
+
+    //Pheromones
+    potencyMod = potencyMod.mul(1+ (game.portal.Pheromones.level * game.portal.Pheromones.modifier));
+
+    //Quick Trimps
+    if (game.singleRunBonuses.quickTrimps.owned) potencyMod = potencyMod.mul(2);
+
+    //Dailies
+    if (game.global.challengeActive == "Daily"){
+        //Dysfunctional
+        if (typeof game.global.dailyChallenge.dysfunctional !== 'undefined')
+            potencyMod = potencyMod.mul(dailyModifiers.dysfunctional.getMult(game.global.dailyChallenge.dysfunctional.strength));
+
+        //Toxic
+        if (typeof game.global.dailyChallenge.toxic !== 'undefined')
+            potencyMod = potencyMod.mul(dailyModifiers.toxic.getMult(game.global.dailyChallenge.toxic.strength, game.global.dailyChallenge.toxic.stacks));
+    }
+
+    //Toxicity
+    if (game.global.challengeActive == "Toxicity" && game.challenges.Toxicity.stacks > 0)
+        potencyMod = potencyMod.mul(Math.pow(game.challenges.Toxicity.stackMult, game.challenges.Toxicity.stacks));
+
+    //Void Maps (Slow Breed)
+    if (game.global.voidBuff == "slowBreed")
+        potencyMod = potencyMod.mul(0.2);
+
+    //Heirlooms
+    potencyMod = calcHeirloomBonusDecimal("Shield", "breedSpeed", potencyMod);
+
+    //Geneticists
+    if (game.jobs.Geneticist.owned > 0)
+        potencyMod = potencyMod.mul(Math.pow(.98, game.jobs.Geneticist.owned));
+
+    return potencyMod.div(10).add(1);
+}
+
+function breedingPS() {
+    //Init
+    var trimps = game.resources.trimps;
+    var breeding = new DecimalBreed(trimps.owned).minus(trimpsEffectivelyEmployed());
+
+    //Gets the modifier, then: 1.1x format -> 0.1 format -> 1.0 x breeding
+    return potencyMod().minus(1).mul(10).mul(breeding);
+}
+
+function breedTotalTime() {
+    //Init
+    var trimps = game.resources.trimps;
+    var trimpsMax = trimps.realMax();
+
+    //Calc
+    var maxBreedable = new DecimalBreed(trimpsMax).minus(trimpsEffectivelyEmployed());
+    var breeding = maxBreedable.minus(trimps.getCurrentSend());
+
+    return DecimalBreed.log10(maxBreedable.div(breeding)).div(DecimalBreed.log10(potencyMod())).div(10);
+}
+
+function breedTimeRemaining() {
+    //Init
+    var trimps = game.resources.trimps;
+    var trimpsMax = trimps.realMax();
+
+    //Calc
+    var maxBreedable = new DecimalBreed(trimpsMax).minus(trimpsEffectivelyEmployed());
+    var breeding = new DecimalBreed(trimps.owned).minus(trimpsEffectivelyEmployed());
+    return DecimalBreed.log10(maxBreedable.div(breeding)).div(DecimalBreed.log10(potencyMod())).div(10);
+}
+
+function ATGA2(hdStats) {
 	if (game.jobs.Geneticist.locked == false && getPageSetting('ATGA2') == true && getPageSetting('ATGA2timer') > 0 && game.global.challengeActive != "Trapper"){
-		var trimps = game.resources.trimps;
-		var trimpsMax = trimps.realMax();
-		var maxBreedable = new DecimalBreed(trimpsMax).minus(trimpsEffectivelyEmployed());
-		var potencyMod = new DecimalBreed(trimps.potency);
-		if (game.upgrades.Potency.done > 0) potencyMod = potencyMod.mul(Math.pow(1.1, game.upgrades.Potency.done));
-		if (game.buildings.Nursery.owned > 0) potencyMod = potencyMod.mul(Math.pow(1.01, game.buildings.Nursery.owned));
-		if (game.unlocks.impCount.Venimp > 0) potencyMod = potencyMod.mul(Math.pow(1.003, game.unlocks.impCount.Venimp));
-		if (game.global.brokenPlanet) potencyMod = potencyMod.div(10);
-		potencyMod = potencyMod.mul(1+ (game.portal.Pheromones.level * game.portal.Pheromones.modifier));
-		if (game.singleRunBonuses.quickTrimps.owned) potencyMod = potencyMod.mul(2);
-		if (game.global.challengeActive == "Daily"){
-			if (typeof game.global.dailyChallenge.dysfunctional !== 'undefined'){
-			potencyMod = potencyMod.mul(dailyModifiers.dysfunctional.getMult(game.global.dailyChallenge.dysfunctional.strength));
-			}
-			if (typeof game.global.dailyChallenge.toxic !== 'undefined'){
-			potencyMod = potencyMod.mul(dailyModifiers.toxic.getMult(game.global.dailyChallenge.toxic.strength, game.global.dailyChallenge.toxic.stacks));
-			}
-		}
-		if (game.global.challengeActive == "Toxicity" && game.challenges.Toxicity.stacks > 0){
-		potencyMod = potencyMod.mul(Math.pow(game.challenges.Toxicity.stackMult, game.challenges.Toxicity.stacks));
-		}
-		if (game.global.voidBuff == "slowBreed"){
-		potencyMod = potencyMod.mul(0.2);
-		}
-		potencyMod = calcHeirloomBonusDecimal("Shield", "breedSpeed", potencyMod);
-		if (game.jobs.Geneticist.owned > 0) potencyMod = potencyMod.mul(Math.pow(.98, game.jobs.Geneticist.owned));
-		potencyMod = potencyMod.div(10).add(1);
-		var decimalOwned = missingTrimps.add(trimps.owned);
-		var timeRemaining = DecimalBreed.log10(maxBreedable.div(decimalOwned.minus(trimpsEffectivelyEmployed()))).div(DecimalBreed.log10(potencyMod)).div(10);
-		var currentSend = game.resources.trimps.getCurrentSend();
-		var totalTime = DecimalBreed.log10(maxBreedable.div(maxBreedable.minus(currentSend))).div(DecimalBreed.log10(potencyMod)).div(10);
+		//Init
+        var timeRemaining = breedTimeRemaining();
+		var totalTime = breedTotalTime();
 
 		var target;
 		if (getPageSetting('ATGA2timer') > 0)
@@ -57,9 +130,9 @@ function ATGA2() {
 		if (getPageSetting('ATGA2timerz') > 0 && getPageSetting('ATGA2timerzt') > 0 && game.global.world >= getPageSetting('ATGA2timerz'))
 		target = new Decimal(getPageSetting('ATGA2timerzt'));
 
-		if (game.global.runningChallengeSquared && getPageSetting('cATGA2timer') > 0 && game.global.challengeActive != 'Electricity' && game.global.challengeActive != 'Toxicity' && game.global.challengeActive != 'Nom')
+		if (game.global.runningChallengeSquared && getPageSetting('cATGA2timer') > 0 && game.global.challengeActive != 'Electricity' && game.global.challengeActive != 'Mapocalypse' && game.global.challengeActive != 'Toxicity' && game.global.challengeActive != 'Nom')
 		target = new Decimal(getPageSetting('cATGA2timer'));
-		if (game.global.runningChallengeSquared && getPageSetting('chATGA2timer') > 0 && (game.global.challengeActive == 'Electricity' || game.global.challengeActive == 'Toxicity' || game.global.challengeActive == 'Nom'))
+		if (getPageSetting('chATGA2timer') > 0 && (game.global.challengeActive == 'Electricity' || game.global.challengeActive == 'Electricity' || game.global.challengeActive == 'Toxicity' || game.global.challengeActive == 'Nom'))
 		target = new Decimal(getPageSetting('chATGA2timer'));
 
 		if (getPageSetting('dATGA2timer') > 0 && game.global.challengeActive == "Daily")
@@ -78,6 +151,8 @@ function ATGA2() {
 			atl = Math.ceil((Math.sqrt((plagueDamagePerStack/2+boggedDamage)**2 - 2 * plagueDamagePerStack * (boggedDamage-1)) - (plagueDamagePerStack/2+boggedDamage)) / plagueDamagePerStack);
 			target = new Decimal(Math.ceil(isNaN(atl) ? target : atl/1000*(((game.portal.Agility.level) ? 1000 * Math.pow(1 - game.portal.Agility.modifier, game.portal.Agility.level) : 1000) + ((game.talents.hyperspeed2.purchased && (game.global.world <= Math.floor((game.global.highestLevelCleared + 1) * 0.5))) || (game.global.mapExtraBonus == "fa")) * -100 + (game.talents.hyperspeed.purchased) * -100)));
 		}
+		
+		if (game.global.challengeActive == 'Lead') target = new Decimal(customLeadTimer(hdStats));
 
 		var now = new Date().getTime();
 		var thresh = new DecimalBreed(totalTime.mul(0.02));
@@ -99,7 +174,7 @@ function ATGA2() {
 					}
 				}
 			}
-			else if (compareTime.add(thresh.mul(-1)).cmp(target) > 0  || (potencyMod.cmp(1) == 0)){
+			else if (compareTime.add(thresh.mul(-1)).cmp(target) > 0  || (potencyMod().cmp(1) == 0)){
 				if (!genDif.isFinite()) genDif = new Decimal(-1);
 				if (genDif.cmp(0) < 0 && game.options.menu.gaFire.enabled != 2){
 					if (genDif.cmp(-10) < 0) genDif = new Decimal(-10);

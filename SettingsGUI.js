@@ -1,63 +1,67 @@
 function automationMenuInit() {
-    var settingBtnSrch = document.getElementsByClassName("btn btn-default");
-    for (var i = 0; i < settingBtnSrch.length; i++) {
-        if (settingBtnSrch[i].getAttribute("onclick") === "toggleSettingsMenu()")
-            settingBtnSrch[i].setAttribute("onclick", "autoPlusSettingsMenu()");
+    const settingBtnSrch = document.getElementsByClassName("btn btn-default");
+    for (const btn of settingBtnSrch) {
+        if (btn.getAttribute("onclick") === "toggleSettingsMenu()") {
+            btn.setAttribute("onclick", "autoPlusSettingsMenu()");
+        }
     }
-    var newItem = document.createElement("TD");
-    newItem.appendChild(document.createTextNode("AutoTrimps"));
-    newItem.setAttribute("class", "btn btn-default");
-    newItem.setAttribute("onclick", "autoToggle()");
-    var settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
-    settingbarRow.insertBefore(newItem, settingbarRow.childNodes[10]);
+    const settingsButton = document.createElement("TD");
+    settingsButton.appendChild(document.createTextNode("AutoTrimps"));
+    settingsButton.setAttribute("class", "btn btn-default");
+    settingsButton.setAttribute("onclick", "autoToggle()");
+    const settingbarRow = document.getElementById("settingsTable").firstElementChild.firstElementChild;
+    settingbarRow.insertBefore(settingsButton, settingbarRow.childNodes[10]);
 
-    var newContainer = document.createElement("DIV");
-    newContainer.setAttribute("style", "margin-top: 0.2vw; display: block; font-size: 1.1vw; height: 1.5em; text-align: center; border-radius: 4px");
-    newContainer.setAttribute("id", "autoMapBtn");
-    newContainer.setAttribute("class", "noselect settingsBtn");
-    newContainer.setAttribute("onClick", "toggleAutoMaps()");
-    newContainer.setAttribute("onmouseover", 'tooltip(\"Toggle Automapping\", \"customText\", event, \"Toggle automapping on and off.\")');
-    newContainer.setAttribute("onmouseout", 'tooltip("hide")');
-    var abutton = document.createElement("SPAN");
-    abutton.appendChild(document.createTextNode("Auto Maps"));
-    abutton.setAttribute("id", "autoMapLabel");
-    var fightButtonCol = document.getElementById("battleBtnsColumn");
-    newContainer.appendChild(abutton);
-    fightButtonCol.appendChild(newContainer);
+    const automapButton = document.createElement("DIV");
+    automapButton.setAttribute("style", "margin-top: 0.2vw; display: block; font-size: 1.1vw; height: 1.5em; text-align: center; border-radius: 4px");
+    automapButton.setAttribute("id", "autoMapBtn");
+    automapButton.setAttribute("class", "noselect settingsBtn");
+    automapButton.setAttribute("onClick", "toggleAutoMaps()");
+    automapButton.setAttribute("onmouseover", 'tooltip(\"Toggle Automapping\", \"customText\", event, \"Toggle automapping on and off.\")');
+    automapButton.setAttribute("onmouseout", 'tooltip("hide")');
+    const automapButtonLabel = document.createElement("SPAN");
+    automapButtonLabel.appendChild(document.createTextNode("Auto Maps"));
+    automapButtonLabel.setAttribute("id", "autoMapLabel");
+    automapButton.appendChild(automapButtonLabel);
+    const fightButtonCol = document.getElementById("battleBtnsColumn");
+    fightButtonCol.appendChild(automapButton);
 
-    newContainer = document.createElement("DIV");
-    newContainer.setAttribute("style", "display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);");
+    const automapStatus = document.createElement("DIV");
+    automapStatus.id = 'autoMapStatusTooltip';
+    automapStatus.setAttribute("style", "display: block; font-size: 1.1vw; text-align: center; background-color: rgba(0,0,0,0.3);");
     if (game.global.universe == 1) {
-        newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p><b>enoughHealth: </b>\" + enoughHealth + \"<br><b>enoughDamage: </b>\" + enoughDamage +\"<br><b>shouldFarm: </b>\" + shouldFarm +\"<br><b>H:D ratio = </b>\" + calcHDratio() + \"<br>\")');
+        automapStatus.setAttribute("onmouseover", 'tooltip(\"Automap status\", \"customText\", event, \"When Auto Maps are enabled, this box will display variables that control its current state and target.\")');
     }
     if (game.global.universe == 2) {
-        newContainer.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p><b>enoughHealth: </b>\" + RenoughHealth + \"<br><b>enoughDamage: </b>\" + RenoughDamage +\"<br><b>shouldFarm: </b>\" + RshouldFarm +\"<br><b>H:D ratio = </b>\" + RcalcHDratio() + \"<br>\")');
+        automapStatus.setAttribute("onmouseover", 'tooltip(\"Health to Damage ratio\", \"customText\", event, \"This status box displays the current mode Automaps is in. The number usually shown here during Farming or Want more Damage modes is the \'HDratio\' meaning EnemyHealth to YourDamage Ratio (in X stance). Above 16 will trigger farming, above 4 will trigger going for Map bonus up to 10 stacks.<p><b>enoughHealth: </b>\" + RenoughHealth + \"<br><b>enoughDamage: </b>\" + RenoughDamage +\"<br><b>shouldFarm: </b>\" + RshouldFarm +\"<br><b>H:D ratio = </b>\" + RcalcHDratio() + \"<br>\")');
     }
-    newContainer.setAttribute("onmouseout", 'tooltip("hide")');
-    abutton = document.createElement("SPAN");
-    abutton.id = 'autoMapStatus';
-    newContainer.appendChild(abutton);
-    fightButtonCol.appendChild(newContainer);
+    automapStatus.setAttribute("onmouseout", 'tooltip("hide")');
+    const automapStatusLabel = document.createElement("SPAN");
+    automapStatusLabel.id = 'autoMapStatus';
+    automapStatus.appendChild(automapStatusLabel);
+    fightButtonCol.appendChild(automapStatus);
 
-    newContainer = document.createElement("DIV");
-    newContainer.setAttribute("style", "display: block; font-size: 1vw; text-align: center; margin-top: 2px; background-color: rgba(0,0,0,0.3);");
-    if (game.global.universe == 1)
-        newContainer.setAttribute("onmouseover", 'tooltip(\"Helium/Hr Info\", \"customText\", event, \"1st is Current He/hr % out of Lifetime He(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total He earned / Lifetime He(not including current)<br>\" + getDailyHeHrStats())');
-    else if (game.global.universe == 2)
-        newContainer.setAttribute("onmouseover", 'tooltip(\"Radon/Hr Info\", \"customText\", event, \"1st is Current Rn/hr % out of Lifetime Rn(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total Rn earned / Lifetime Rn(not including current)<br>\" + getDailyRnHrStats())');
-    newContainer.setAttribute("onmouseout", 'tooltip("hide")');
-    abutton = document.createElement("SPAN");
-    abutton.id = 'hiderStatus';
-    newContainer.appendChild(abutton);
-    fightButtonCol.appendChild(newContainer);
+    const HeHrStatus = document.createElement("DIV");
+    HeHrStatus.id = 'statsTooltip';
+    HeHrStatus.setAttribute("style", "display: block; font-size: 1vw; text-align: center; margin-top: 2px; background-color: rgba(0,0,0,0.3);");
+    if (game.global.universe == 1) {
+        HeHrStatus.setAttribute("onmouseover", 'tooltip(\"Helium/Hr Info\", \"customText\", event, \"1st is Current He/hr % out of Lifetime He(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total He earned / Lifetime He(not including current)<br>\" + getDailyHeHrStats())');
+    } else if (game.global.universe == 2) {
+        HeHrStatus.setAttribute("onmouseover", 'tooltip(\"Radon/Hr Info\", \"customText\", event, \"1st is Current Rn/hr % out of Lifetime Rn(not including current+unspent).<br> 0.5% is an ideal peak target. This can tell you when to portal... <br>2nd is Current run Total Rn earned / Lifetime Rn(not including current)<br>\" + getDailyRnHrStats())');
+    }
+    HeHrStatus.setAttribute("onmouseout", 'tooltip("hide")');
+    const HeHrStatusLabel = document.createElement("SPAN");
+    HeHrStatusLabel.id = 'hiderStatus';
+    HeHrStatus.appendChild(HeHrStatusLabel);
+    fightButtonCol.appendChild(HeHrStatus);
 
-    var $portalTimer = document.getElementById('portalTimer');
+    const $portalTimer = document.getElementById('portalTimer');
     $portalTimer.setAttribute('onclick', 'toggleSetting(\'pauseGame\')');
     $portalTimer.setAttribute('style', 'cursor: default');
 
-    var btns = document.getElementsByClassName("fightBtn");
-    for (var x = 0; x < btns.length; x++) {
-        btns[x].style.padding = "0.01vw 0.01vw";
+    const btns = document.getElementsByClassName("fightBtn");
+    for (const btn of btns) {
+        btn.style.padding = "0.01vw 0.01vw";
     }
 }
 automationMenuInit();
@@ -279,11 +283,11 @@ function initializeAllSettings() {
     createSetting('amalcoordt', 'Amal Target', 'Set the amount of Amals you wish to aim for. Once this target is reached, it will buy coords below your Amal ratio regardless of your H:D, just enough to keep the Amal. -1 to disable and use H:D for entire boost. ', 'value', -1, null, "Core");
     createSetting('amalcoordhd', 'Amal Boost H:D', 'Set your H:D for Amal Boost here. The higher it is the less coords AT will buy. 0.0000025 is the default. ', 'value', 0.0000025, null, "Core");
     createSetting('amalcoordz', 'Amal Boost End Z', 'Amal Boost End Zone. Set the zone you want to stop Amal Boosting. -1 to do it infinitely. ', 'value', -1, null, "Core");
-    createSetting('AutoAllocatePerks', ['Auto Allocate Off', 'Auto Allocate On', 'Dump into Looting II'], 'Uses the AutoPerks ratio based preset system to automatically allocate your perks to spend whatever helium you have when you AutoPortal. Does not change Fixed Perks: siphonology, anticipation, meditation, relentlessness, range, agility, bait, trumps, packrat, capable. NEW: Dump into Looting II, dumps all loot gained from previous portal at specified zone', 'multitoggle', 0, null, 'Core');
+    createSetting('AutoAllocatePerks', ['Auto Allocate Off', 'Auto Allocate On', 'Dump into Looting II'], 'Uses the AutoPerks ratio based preset system to automatically allocate your perks to spend whatever helium you have when you AutoPortal. Does not change Fixed Perks: siphonology, anticipation, meditation, relentlessness, range, agility, bait, trumps, packrat, capable. <br>NEW: Dump into Looting II, dumps all loot gained from previous portal at specified zone', 'multitoggle', 0, null, 'Core');
 
     //Line 2
     createSetting('fastallocate', 'Fast Allocate', 'Turn on if your helium is above 500Qa. Not recommended for low amounts of helium. ', 'boolean', false, null, 'Core');
-    createSetting('TrapTrimps', 'Trap Trimps', 'Automatically trap trimps when needed, including building traps. (when you turn this off, you may aswell turn off the in-game autotraps button, think of the starving trimps that could eat that food!)', 'boolean', true, null, "Core");
+    createSetting('TrapTrimps', 'Trap Trimps', 'Automatically trap trimps when needed, including building traps (when you turn this off, you may as well turn off the in-game AutoTraps button. Think of the starving trimps that could eat that food!). <br>NEW: AT will stop trapping when you have Geneticists, or when trapping would increase less than 10% of your breeding timer. <br><b>Recommended: On (let it turn itself off on its own).</b>', 'boolean', true, null, "Core");
     createSetting('AutoEggs', 'AutoEggs', 'Click easter egg if it exists, upon entering a new zone. Warning: Quite overpowered. Please solemnly swear that you are up to no good.', 'boolean', false, null, 'Core');
     createSetting('AutoBoneChargeMax', ['Manual Bone Charge', 'Bone Charge When Max', 'Bone Charge (Daily Only)'], 'Automatically uses a Bone Charge from the Bone Shrine if you are at max charges. The start zone can be configured under <i>Bone Charge Start Z.</i><br><br><b>Bone Charge (Daily Only)</b> as the name suggests; will only use a Bone Charge when at max and if on a daily challenge.<br><br><b>Default: Off (Manual Bone Charge).</b>', 'multitoggle', 0, null, "Core");
     createSetting('AutoBoneChargeMaxStartZone', 'Bone Charge Start Z', 'Enter the zone number at which you wish to <i>start</i> using Bone Charges.<br><br>Alternatively, set it to <i><b>-1</b></i> to automatically update the zone to 10% of your highest zone cleared. For example, if your highest zone cleared was 400, bone charges would be automatically used from zone 360 onwards.<br><br><b>Default: Automated (-1).</b>', 'value', -1, null, "Core");
@@ -303,9 +307,9 @@ function initializeAllSettings() {
     createSetting('AutoPortal', 'AutoPortal', 'Automatically portal. Will NOT auto-portal if you have a challenge active, the challenge setting dictates which challenge it will select for the next run. All challenge settings will portal right after the challenge ends, regardless. Helium Per Hour only <b>portals at cell 1</b> of the first level where your He/Hr went down even slightly compared to the current runs Best He/Hr. Take note, there is a Buffer option, which is like a grace percentage of how low it can dip without triggering. Setting a buffer will portal mid-zone if you exceed 5x of the buffer.  CAUTION: Selecting He/hr may immediately portal you if its lower-(use Pause AutoTrimps button to pause the script first to avoid this)', 'dropdown', 'Off', ['Off', 'Helium Per Hour', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination', 'Experience', 'Custom'], "Core");
     createSetting('HeliumHourChallenge', 'Portal Challenge', 'Automatically portal into this challenge when using helium per hour or custom autoportal. Custom portals after cell 100 of the zone specified. Do not choose a challenge if you havent unlocked it. ', 'dropdown', 'None', ['None', 'Balance', 'Decay', 'Electricity', 'Life', 'Crushed', 'Nom', 'Toxicity', 'Watch', 'Lead', 'Corrupted', 'Domination', 'Experience'], "Core");
     document.getElementById("HeliumHourChallengeLabel").innerHTML = "Portal Challenge:";
-    createSetting('CustomAutoPortal', 'Custom Portal', 'Automatically portal AFTER clearing this level.(ie: setting to 200 would portal when you first reach level 201)', 'value', '999', null, "Core");
+    createSetting('CustomAutoPortal', 'Custom Portal', 'Automatically portal AFTER clearing this level. <b>(ie: setting to 200 would portal when you reach level 201)</b>', 'value', '999', null, "Core");
     createSetting('HeHrDontPortalBefore', 'Don\'t Portal Before', 'Do NOT allow Helium per Hour AutoPortal setting to portal BEFORE this level is reached. It is an additional check that prevents drops in helium/hr from triggering autoportal. Set to 0 or -1 to completely disable this check. (only shows up with Helium per Hour set)', 'value', '999', null, "Core");
-    createSetting('HeliumHrBuffer', 'He/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the He/Hr Autoportal, it will portal if your He/Hr drops by this amount of % lower than your best for current run, default is 0% (ie: set to 5 to portal at 95% of your best). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Core');
+    createSetting('HeliumHrBuffer', 'He/Hr Portal Buffer %', 'IMPORTANT SETTING. When using the He/Hr AutoPortal, it will portal if your He/Hr drops by this amount of % lower than your best for current run, default is 0% (ie: set to 5 to portal at 95% of your best). Now with stuck protection - Allows portaling midzone if we exceed set buffer amount by 5x. (ie a normal 2% buffer setting would now portal mid-zone you fall below 10% buffer).', 'value', '0', null, 'Core');
 
     //RPortal
     document.getElementById('Rdumpgreed').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -338,6 +342,7 @@ function initializeAllSettings() {
     createSetting('avoidempower', 'Avoid Empower', 'Tries to avoid Empower stacks in Empower Dailies. No harm in this being on, so default is On. ', 'boolean', true, null, 'Daily');
     createSetting('darmormagic', ['Daily Armor Magic Off', 'DAM: Above 80%', 'DAM: H:D', 'DAM: Always'], 'Will buy Armor to try and prevent death on Bleed/Plague/Bogged Dailies under the 3 conditions. <br><b>Above 80%:</b> Will activate at and above 80% of your HZE. <br><b>H:D:</b> Will activate at and above the H:D you have defined in maps. <br><b>Always</b> Will activate always. <br>All options will activate at or <b>below 25% of your health.</b> ', 'multitoggle', 0, null, "Daily");
     createSetting('dscryvoidmaps', 'Daily VM Scryer', 'Only use in Dailies if you have Scryhard II, for er, obvious reasons. Works without the scryer options. ', 'boolean', false, null, 'Daily');
+    createSetting('dMaxMapBonushealth', 'Daily Max MapBonus Health', 'Limit the amount of map bonuses you get when AutoMaps requires more health during dailies. <br><br>This is a very important setting to be used with Advanced Nurseries after Magma. Basically, if you are running out of nurseries too soon, increase this value, otherwise lower it. <br><br>Default is 10.', 'value', '10', null, 'Daily');
 
     //Spire
     document.getElementById('dscryvoidmaps').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -484,7 +489,7 @@ function initializeAllSettings() {
     //C2 Runner Line
     document.getElementById('novmsc2').parentNode.insertAdjacentHTML('afterend', '<br>');
     createSetting('c2runnerstart', 'C2 Runner', 'Runs the normal C2s in sequence according to difficulty. See C2Table for list. Once zone you have defined has been reached, will portal into next. I will advise you not to touch the challenges (abandoning, doing a different one, etc) if you are running this, it could break it. Only runs challenges that need updating, will not run ones close-ish to your HZE. ', 'boolean', false, null, 'C2');
-    createSetting('c2runnerportal', 'C2 Runner Portal', 'Automatically portal AFTER clearing this level in C2 Runner. (ie: setting to 200 would portal when you first reach level 201)', 'value', '999', null, "C2");
+    createSetting('c2runnerportal', 'C2 Runner Portal', 'Automatically portal after REACHING this level in C2 Runner. (ie: setting to 200 would portal right after clearing zone 199)', 'value', '999', null, "C2");
     createSetting('c2runnerpercent', 'C2 Runner %', 'What percent Threshhold you want C2s to be over. E.g 85, will only run C2s with HZE% below this number. Default is 85%. Must have a value set for C2 Runner to... well, run. ', 'value', '85', null, "C2");
     createSetting('c2table', 'C2 Table', 'Display your C2s and C3s in a convenient table which is colour coded. <br><b>Green</b> = Not worth updating. <br><b>Yellow</b> = Consider updating. <br><b>Red</b> = Updating this C2/C3 is worth doing. <br><b>Blue</b> = You have not yet done/unlocked this C2/C3 challenge. ', 'infoclick', 'c2table', null, 'C2');
 
@@ -493,30 +498,41 @@ function initializeAllSettings() {
     //Buildings
 
     //Line 1
-    createSetting('hidebuildings', 'Hide Buildings', 'If you have unlocked Autostructure and Decabuild, this setting will appear and enable you to hide the now obsolete building settings, so please use AutoStructure instead. The settings will only disappear if you disable the buy buildings button and turn this on. It will not hide the Gym settings as Autostructure does not allow you to customize how you buy them. ', 'boolean', false, null, "Buildings");
+    createSetting('hidebuildings', 'Hide Buildings', 'If you have unlocked Autostructure and Decabuild, this setting will appear and enable you to hide the now obsolete building settings, and use AutoStructure instead. The settings will only disappear if you disable the buy buildings button and turn this on. It will not hide the Gym settings as AutoStructure does not allow you to customize how you buy them. <br><b>Obs. After the changes made by Psycho-Ray, you may not want to do this,</b> specially thanks to Advanced Nurseries and the (and the Gem/Food Eff Ignores Max, but that\'s mostly cosmetic at this point).</b>', 'boolean', false, null, "Buildings");
     createSetting('BuyBuildingsNew', ['Buy Neither', 'Buy Buildings & Storage', 'Buy Buildings', 'Buy Storage'], 'AutoBuys Storage when it is almost full (it even anticipates Jestimp) and Non-Storage Buildings (As soon as they are available). Takes cost efficiency into account before buying Non-Storage Buildings.', 'multitoggle', 1, null, "Buildings");
     createSetting('WarpstationCap', 'Warpstation Cap', 'Do not level Warpstations past Basewarp+DeltaGiga **. Without this, if a Giga wasnt available, it would level infinitely (wastes metal better spent on prestiges instead.) **The script bypasses this cap each time a new giga is bought, when it insta-buys as many as it can afford (since AT keeps available metal/gems to a low, overbuying beyond the cap to what is affordable at that first moment is not a bad thing). ', 'boolean', true, null, 'Buildings');
     createSetting('WarpstationCoordBuy', 'Buy Warp to Hit Coord', 'If we are very close to hitting the next coordination, and we can afford the warpstations it takes to do it, Do it! (even if we are over the Cap/Wall). Recommended with WarpCap/WarpWall. (has no point otherwise) ', 'boolean', true, null, 'Buildings');
-    createSetting('MaxHut', 'Max Huts', 'Huts', 'value', '100', null, "Buildings");
-    createSetting('MaxHouse', 'Max Houses', 'Houses', 'value', '100', null, "Buildings");
-    createSetting('MaxMansion', 'Max Mansions', 'Mansions', 'value', '100', null, "Buildings");
-    createSetting('MaxHotel', 'Max Hotels', 'Hotels', 'value', '100', null, "Buildings");
+    createSetting('GemEfficiencyIgnoresMax', 'Gem Eff Ignores Max', "If enabled, AT will buy gem housing (Mansion, Hotel, ..., Collectors) above the limits defined by MaxMansion, MaxHotel, etc, as long as that building is the most efficient thing to buy in Housing/Gem. <b>This is mostly cosmetic</b>, since by the time you start limiting those buildings, they are only the most efficient if they cost almost nothing. If this option is enabled, you may actually disable the regular limiters for these buildings.", 'boolean', 'true', null, 'Buildings');
+    createSetting('FoodEfficiencyIgnoresMax', 'Food Eff Ignores Max', "Similar to Gem Efficiency Ignores Limit, but with one big difference. It considers all forms of housing that uses food, but it only buys Huts and Houses, which means that if another building is the most food efficient one, it'll wait until it isn't anymore (because something else brought them, like Gem Efficiency or the user). This behavior saves food, and actually does so by enforcing gem efficiency. If this option is enabled, you may actually disable the regular limiters for these buildings.", 'boolean', 'true', null, 'Buildings');
+    createSetting('FirstGigastation', 'First Gigastation', 'How many warpstations to buy before your first Gigastation. <br><b>If you\'re using Auto Gigas, this setting will replace itself on its own, so please don\'t touch this setting.</b> In that case, this button will remain here so you\'ll be able to check how many Warps it had when it bought its first Gigastation, instead of hiding itself.', 'value', '20', null, "Buildings");
+    createSetting('DeltaGigastation', 'Delta Gigastation', '<b>YOU MUST HAVE BUY UPGRADES ENABLED!</b><br> How many extra Warpstations to buy for each gigastation. Supports decimal values. For example 2.5 will buy +2/+3/+2/+3... <br><b>If you\'re using Auto Gigas, this setting will replace itself on its own, so please don\'t touch this setting.</b> In that case, this button will remain here so you\'ll be able to check how many Warps it had when it bought its first Gigastation, instead of hiding itself.', 'value', '2', null, "Buildings");
 
     //Line 2
-    createSetting('MaxResort', 'Max Resorts', 'Resorts', 'value', '100', null, "Buildings");
-    createSetting('MaxGateway', 'Max Gateways', 'Gateways', 'value', '25', null, "Buildings");
-    createSetting('MaxWormhole', 'Max Wormholes', 'WARNING: Wormholes cost helium! Values below 0 do nothing.', 'value', '0', null, "Buildings");
-    createSetting('MaxCollector', 'Max Collectors', 'recommend: -1', 'value', '-1', null, "Buildings");
-    createSetting('MaxGym', 'Max Gyms', 'Advanced. recommend: -1', 'value', '-1', null, "Buildings");
-    createSetting('MaxTribute', 'Max Tributes', 'Advanced. recommend: -1 ', 'value', '-1', null, "Buildings");
-    createSetting('GymWall', 'Gym Wall', 'Conserves Wood. Only buys 1 Gym when you can afford <b>X</b> gyms wood cost (at the first one\'s price, simple math). -1 or 0 to disable. In other words, only allows gyms that cost less than 1/nth your currently owned wood. (to save wood for nurseries for new z230+ Magma nursery strategy). Takes decimal numbers. (Identical to the Warpstation wall setting which is why its called that). Setting to 1 does nothing besides stopping gyms from being bought 2 at a time due to the mastery.', 'value', -1, null, 'Buildings'); //remove?
+    createSetting('MaxHut', 'Max Huts', 'Huts. <br>Ignored and hidden when Food Eff Ignores Max is On.', 'value', '100', null, "Buildings");
+    createSetting('MaxHouse', 'Max Houses', 'Houses. <br>Ignored and hidden when Food Eff Ignores Max is On.', 'value', '100', null, "Buildings");
+    createSetting('MaxMansion', 'Max Mansions', 'Mansions. <br>Ignored and hidden when Food AND Gem Eff Ignores Max are On.', 'value', '100', null, "Buildings");
+    createSetting('MaxHotel', 'Max Hotels', 'Hotels. <br>Ignored and hidden when Food AND Gem Eff Ignores Max are On.', 'value', '100', null, "Buildings");
+    createSetting('MaxResort', 'Max Resorts', 'Resorts. <br>Ignored and hidden when Food AND Gem Eff Ignores Max are On.', 'value', '100', null, "Buildings");
+    createSetting('MaxCollector', 'Max Collectors', 'Collectors. <br>Ignored and hidden when Gem Eff Ignores Max is On. <br><b>Recommend: -1.</b>', 'value', '-1', null, "Buildings");
+    createSetting('MaxGateway', 'Max Gateways', 'Gateways', 'value', '-1', null, "Buildings");
 
     //Line 3
-    createSetting('FirstGigastation', 'First Gigastation', 'How many warpstations to buy before your first gigastation', 'value', '20', null, "Buildings");
-    createSetting('DeltaGigastation', 'Delta Gigastation', '<b>YOU MUST HAVE BUY UPGRADES ENABLED!</b><br> How many extra warpstations to buy for each gigastation. Supports decimal values. For example 2.5 will buy +2/+3/+2/+3...', 'value', '2', null, "Buildings");
+    createSetting('MaxWormhole', 'Max Wormholes', 'WARNING: Wormholes cost helium! Values below 0 do nothing.', 'value', '0', null, "Buildings");
+    createSetting('MaxTribute', 'Max Tributes', 'Advanced. <b>Recommend: -1.</b>', 'value', '-1', null, "Buildings");
+    createSetting('MaxGym', 'Max Gyms', 'Advanced. <b>Recommend: -1.</b>', 'value', '-1', null, "Buildings");
+    createSetting('GymWall', 'Gym Wall', 'Conserves Wood. Only buys 1 Gym when you can afford <b>X</b> gyms wood cost (at the first one\'s price, simple math). -1 or 0 to disable. In other words, only allows gyms that cost less than 1/nth your currently owned wood. (to save wood for nurseries for new z230+ Magma nursery strategy). Takes decimal numbers. (Identical to the Warpstation wall setting which is why its called that). Setting to 1 does nothing besides stopping gyms from being bought 2 at a time due to the mastery.', 'value', -1, null, 'Buildings');
+    createSetting('GatewayWall', 'Gateway Wall', "Same as Gym Wall and Nursery Wall, but for Gateways.", 'value', '100', null, 'Buildings');
     createSetting('WarpstationWall3', 'Warpstation Wall', 'Conserves Metal. Only buys 1 Warpstation when you can afford <b>X</b> warpstations metal cost (at the first one\'s price, simple math). -1, 0, 1 = disable. In other words, only allows warps that cost less than 1/nth your currently owned metal. (to save metal for prestiges)', 'value', -1, null, 'Buildings');
-    createSetting('MaxNursery', 'Max Nurseries', 'Advanced. Recommend: -1 until you reach Magma (z230+)', 'value', '-1', null, "Buildings");
-    createSetting('NoNurseriesUntil', 'No Nurseries Until z', 'Builds Nurseries starting from this zone. -1 to build from when they are unlocked. ', 'value', '-1', null, 'Buildings');
+    createSetting('NurseryWall', 'Nursery Wall', "Same as Gym Wall, but for nurseries. This setting works along the other nursery limiters, including advanced nurseries.", 'value', '100', null, 'Buildings');
+
+    //Line 4
+    createSetting('MaxNursery', 'Max Nurseries', 'Advanced. This settings works alongside Advanced Nurseries (although it\'s usually not needed), so that if it reaches this number of nurseries, and still needs more health to advance, it will be forced to farm instead. <b>Recommend: -1 until you reach Magma (z230+).</b>', 'value', '-1', null, "Buildings");
+    createSetting('NoNurseriesUntil', 'No Nurseries Until z', 'Builds Nurseries starting from this zone. -1 to build from when they are unlocked. This setting does work alongside Advanced Nurseries, but it\'s usually better to let Advanced Nurseries do its thing.', 'value', '-1', null, 'Buildings');
+    createSetting('AdvancedNurseries', 'Advanced Nurseries', "If enabled AND your HZE is higher than 230 (it acts as if disabled otherwise), AT will only buy nurseries if you need more health, don't need more damage (because then you'd have to farm anyway), AND you have more map stacks than the <b>Map MapBonus Health</b> setting, which becomes a very important setting. Also, it won't buy nurseries while farming for the spire. Please refer to The Spire options to know more about that. <b>Recommended: Always On.</b>", 'boolean', 'true', null, 'Buildings');
+    createSetting('AutoGigas', 'Auto Gigas', "Advanced. <br>If enabled, AT will buy its first Gigastation if: <br>A) Has more than 2 Warps & <br>B) Can't afford more Coords & <br>C) (Only if Custom Delta Factor > 20) Lacking Health or Damage & <br>D) (Only if Custom Delta Factor > 20) Has run at least 1 map stack or <br>E) If forced to by using the firstGiga(true) command in the console. <br>Then, it'll calculate the delta based on your Custom Delta Factor and your Auto Portal/VM zone (whichever is higher), or Daily Auto Portal/VM zone, or C2 zone, or Custom AutoGiga Zone.", 'boolean', 'true', null, 'Buildings');
+    createSetting('CustomTargetZone', 'Custom Target Zone', 'To be used with Auto Gigas. <br>The zone to be used as a the target zone when calculating the Auto Gigas delta. <br>Values below 60 will be discarded.', 'value', '-1', null, "Buildings");
+    createSetting('CustomDeltaFactor', 'Custom Delta Factor', 'Advanced. To be used with Auto Gigas. <br>This setting is used to calculate a better Delta. Think of this setting as how long your target zone takes to complete divided by the zone you bought your first giga in. <br>Basically, a higher number means a higher delta. Values below 1 will default to 10. <br><b>Recommended: 1-2 for very quick runs. 5-10 for regular runs where you slow down at the end. 20-100+ for very pushy runs.</b>', 'value', '-1', null, "Buildings");
+
 
     //RBuildings
 
@@ -616,7 +632,6 @@ function initializeAllSettings() {
     createSetting('Requipfarmhits', 'AEF: Hits', 'How many hits do you want to kill an enemy in a AEF map. ', 'value', '-1', null, 'Gear');
 
 
-
     //Maps
 
     //Line 1
@@ -634,31 +649,38 @@ function initializeAllSettings() {
     //Line 2
     createSetting('DynamicSiphonology', 'Dynamic Siphonology', 'Recommended Always ON. Use the right level of siphonology based on your damage output. IE: Only uses  siphonology if you are weak. With this OFF it means it ALWAYS uses the lowest siphonology map you can create. Siphonology is a perk you get at level 115-125ish, and means you receive map bonus stacks for running maps below your current zone - Up to 3 zones below (1 per perk level).', 'boolean', true, null, 'Maps');
     createSetting('PreferMetal', 'Prefer Metal Maps', 'Always prefer metal maps, intended for manual use, such as pre-spire farming. Remember to turn it back off after you\'re done farming!', 'boolean', false, null, 'Maps');
-    createSetting('mapselection', 'Map Selection', 'Select which you prefer to use. Recommend Plentiful (Gardens) if you have unlocked it. ', 'dropdown', 'Mountain', ["Random", "Mountain", "Forest", "Sea", "Depths", "Gardens"], 'Maps');
-    createSetting('MaxMapBonusAfterZone', 'Max MapBonus After', 'Always gets Max Map Bonus from this zone on. (inclusive and after).<br><b>NOTE:</b> Set -1 to disable entirely (default). Set 0 to use it always.<br><b>Advanced:</b>User can set a lower number than the default 10 maps with the AT hidden console command: MODULES[\\"maps\\"].maxMapBonusAfterZ = 9;', 'value', '-1', null, 'Maps');
-    createSetting('MaxMapBonuslimit', 'Max MapBonus Limit', 'Limit the amount of Map Bonuses you get. Default is 10. ', 'value', '10', null, 'Maps');
-    createSetting('MaxMapBonushealth', 'Max MapBonus Health', 'Limit the amount of map bonuses you get when AutoMaps requires more health. Default is 10. ', 'value', '10', null, 'Maps');
-    createSetting('mapcuntoff', 'Map Cut Off', 'Decides when to get max map bonus. 4 is default. This means it will take 1 hit to kill an enemy if in D stance. ', 'value', '4', null, 'Maps');
-
-    //Line 3
-    createSetting('DisableFarm', 'Farming H:D', 'If H:D goes above this value, it will farm for Damage & Health. The lower this setting, the more it will want to farm. Default is <b>16<b/>. <b>-1 to disable farming!</b>', 'value', -1, null, 'Maps');
     createSetting('LowerFarmingZone', 'Lower Farming Zone', 'Lowers the zone used during Farming mode. Uses the dynamic siphonology code, to Find the minimum map level you can successfully one-shot, and uses this level for any maps done after the first 10 map stacks. The difference being it goes LOWER than what Siphonology gives you map-bonus for, but after 10 stacks you dont need bonus, you just want to do maps that you can one-shot. Goes as low as 10 below current zone if your damage is that bad, but this is extreme and indicates you should probably portal.', 'boolean', true, null, 'Maps');
     createSetting('FarmWhenNomStacks7', 'Farm on >7 NOMstacks', 'Optional. If Improbability already has 5 NOMstacks, stack 30 Anticipation. If the Improbability has >7 NOMstacks on it, get +200% dmg from MapBonus. If we still cant kill it, enter Farming mode at 30 stacks, Even with DisableFarming On! (exits when we get under 10x). Farms if we hit 100 stacks in the world. If we ever hit (100) nomstacks in a map (likely a voidmap), farm, (exit the voidmap) and (prevent void from running, until situation is clear). Restarts any voidmaps if we hit 100 stacks. ', 'boolean', false, null, 'Maps');
-    createSetting('VoidMaps', 'Void Maps', '<b>0 to disable</b> The zone at which you want all your void maps to be cleared inclusive of the zone you type. Runs them at Cell 70. Use odd zones on Lead.<br>', 'value', '0', null, "Maps");
-    createSetting('voidscell', 'Voids Cell', 'Run Voids at this Cell. -1 to run them at the default value, which is 70. ', 'value', '-1', null, 'Maps');
+    createSetting('FarmOnLowHealth', 'Farm On Low Health', "If your trimps do not have enough health to pass the Num Hits Survived criteria, then it will activate farming mode, which means it will stay on maps after getting its map stacks. Recommended: Always on. Lower your Num Hits Survived if you needed.", 'boolean', true, null, 'Maps');
+    createSetting('TrimpleZ', 'Trimple Z', 'I don\'t really think doing this automatically is a good idea. You might want to farm for a bit before this, but I\'m not sure if it\'s meaningful at all to make a \'farm X minutes before trimple\' parameter to go along with it. Set it to the zone you want and it will run Trimple of Doom for Ancient Treasure AFTER farming and getting map stacks. If it is a negative number, this will be disabled after a successful run so you can set it differently next time.', 'valueNegative', 0, null, 'Maps');
+    createSetting('MaxMapBonusAfterZone', 'Max MapBonus After', 'Always gets Max Map Bonus from this zone on. (inclusive and after).<br><b>NOTE:</b> Set -1 to disable entirely (default). Set 0 to use it always.<br><b>Advanced:</b>User can set a lower number than the default 10 maps with the AT hidden console command: MODULES[\\"maps\\"].maxMapBonusAfterZ = 9;', 'value', '-1', null, 'Maps');
+
+    //Line 3
+    createSetting('MaxMapBonuslimit', 'Max MapBonus Limit', 'Limit the amount of Map Bonuses you get. Default is 10. ', 'value', '10', null, 'Maps');
+    createSetting('MaxMapBonushealth', 'Max MapBonus Health', 'Limit the amount of map bonuses you get when AutoMaps requires more health. <br><br>This is a very important setting to be used with Advanced Nurseries after Magma. Basically, if you are running out of nurseries too soon, increase this value, otherwise lower it. <br><br>Default is 10.', 'value', '10', null, 'Maps');
+    createSetting('mapcuntoff', 'Map Cut Off', 'Decides when to get max map bonus. 4 is default. This means it will take 1 hit to kill an enemy if in D stance. ', 'value', '4', null, 'Maps');
+    createSetting('DisableFarm', 'Farming H:D', 'If H:D goes above this value, it will farm for Damage & Health. The lower this setting, the more it will want to farm. Default is <b>16<b/>. <b>-1 to disable farming!</b>', 'value', 16, null, 'Maps');
+    createSetting('NumHitsSurvived', 'Num Hits Survived', 'One of the most important settings in this version of AT. It roughly translates to how many your trimps can take from a C99 Snimp, on average. Keep in mind that this number is further multiplied by other variables according to the situation, like VoidHitMult when preparing to go to a Void Map. The recommended values are 1.5~~3.0 for very early game, 5 with geneticists and 7.5 with 45 stacks, but the actual recommendation is to use a number that would give your trimps a good survivability without farming too much for it. Values close too close to 1 or below it are usually not recommended, since they will get you stuck.', 'value', '5', null, 'Maps');
+    createSetting('VoidMaps', 'Void Maps', '<b>0 to disable</b> The zone at which you want all your void maps to be cleared inclusive of the zone you type. Runs them at Cell 90 by default, and starts farming 1 row below that. Use odd zones on Lead.<br>', 'value', '0', null, "Maps");
     createSetting('RunNewVoidsUntilNew', 'New Voids Mod', '<b>0 to disable. Positive numbers are added to your Void Map zone. -1 for no cap.</b> This allows you to run new Void Maps obtained after your Void Map zone by adding this number to your Void Map zone. <br> <b>Example</b> Void map zone=187 and This setting=10. New Voids run until 197).<br>This means that any new void maps gained until Z197. CAUTION: May severely slow you down by trying to do too-high level void maps. Default 0 (OFF).', 'value', '0', null, 'Maps');
-    createSetting('runnewvoidspoison', 'New Voids Poison', 'Only run new voids in poison zones.', 'boolean', false, null, 'Maps');
-    createSetting('onlystackedvoids', 'Stacked Voids Only', 'Only run stacked voids. ', 'boolean', false, null, 'Maps');
 
     //Line 4
-    createSetting('TrimpleZ', 'Trimple Z', 'I don\'t really think doing this automatically is a good idea. You might want to farm for a bit before this, but I\'m not sure if it\'s meaningful at all to make a \'farm X minutes before trimple\' parameter to go along with it. Set it to the zone you want and it will run Trimple of Doom for Ancient Treasure AFTER farming and getting map stacks. If it is a negative number, this will be disabled after a successful run so you can set it differently next time.', 'valueNegative', 0, null, 'Maps');
     createSetting('AdvMapSpecialModifier', 'Map Special Modifier', '<b>BELOW 300 ONLY</b><br> Attempt to select the BEST map special modifier. When starting a map for <b>Prestige</b> it will use <i>Prestigious</i>. When starting a map for <b>Farming</b> (for equipment) it will use your best metal cache. In any other case (such as farming for map stacks) it will use <i>Fast Attacks</i>. In all cases it uses the best modifier that can be afforded.', 'boolean', true, null, 'Maps');
-    createSetting('scryvoidmaps', 'VM Scryer', 'Only use if you have Scryhard II, for er, obvious reasons. Works without the scryer options. ', 'boolean', false, null, 'Maps');
-    createSetting('buywepsvoid', 'VM Buy Weps', 'Buys gear in Void maps regardless of your H:D ratio. Useful if you want to overkill as much as possible. ', 'boolean', false, null, 'Maps');
     createSetting('farmWonders', 'Farm Wonders', 'Farms wonders until the selected amount and does BW at given zone to finish the challenge', 'boolean', false, null, 'Maps')
     createSetting('wondersAmount', 'Wonders Amount', 'Select the amount of Wonders you want to farm in each given run, <b> 0 to disable </b>', 'value', '0', null, "Maps");
     createSetting('maxExpZone', "Max XP Zone", 'Acquire Wonders from this zone down. <b>This must have a value or other Experience settings will not work.</b> If >z600, will complete Experience by running BW on this zone as well. For example, targeting three Wonders with a Max XP Zone of 600 will obtain the Wonders at: 600, 595, 590.', 'value', '600', null, 'Maps');
     createSetting('finishExpOnBw', 'Finish XP on BW', 'Finish Experience challenge by completing this level of BW. <b>This level of BW should already be in your inventory.</b> Use BW Raiding module if you want to raid to a specific level of BW before 601, or else you may accidentally complete the challenge at a lower or higher BW than intended using this setting. If this is an invalid BW value, it will run the next lowest valid BW zone (e.g. 606 will run 605).', 'value', '605', null, 'Maps');
+    createSetting('voidscell', 'Voids Cell', "Run Voids at this Cell. <br>Keep in mind that AT will start farming for the VMs 10 cells below the cell it will actually do them. Set it to -1 to run your VMs at the default cell, which is 90.", 'value', '-1', null, 'Maps');
+    createSetting('VoidHDMult', 'Void H:D Mult', "This is a multiplier to your <b>mapCutOff</b> and <b>farming H:D</b>, and only works at your void map zones. Values below 1 will make VMs require <b>more</b> damage. <br>Usually 1 is fine, but if you're doing VMs much later than you should, consider 2 or 4. Values below 1 may cause you to farm more than you should, because you'd be one-shooting everything anyway, unless you increased the original H:D config above 4.", 'value', '1', null, 'Maps');
+    createSetting('VoidHitsMult', 'Void Hits Mult', "This is a multiplier to your <b>numHitsSurvived</b>, and only works at your void map zones. Values below 1 will make VMs require <b>less</b> health. <br>Since this is a multiplier, the correct value also depends on what you defined in Num Hits Survived. If one times the other is below 1, your trimps will be one shoot fairly often, so other than your very fist VMs ever, or when pushing to unlock something, this option should probably be higher than 1.", 'value', '2', null, 'Maps');
+    
+    //Line 5?
+    
+    createSetting('runnewvoidspoison', 'New Voids Poison', 'Only run new voids in poison zones.', 'boolean', false, null, 'Maps');
+    createSetting('onlystackedvoids', 'Stacked Voids Only', 'Only run stacked voids. ', 'boolean', false, null, 'Maps');
+    createSetting('scryvoidmaps', 'VM Scryer', 'Only use if you have Scryhard II, for er, obvious reasons. Works without the scryer options. ', 'boolean', false, null, 'Maps');
+    createSetting('buywepsvoid', 'VM Buy Weps', 'Buys gear in Void maps regardless of your H:D ratio. Useful if you want to overkill as much as possible. ', 'boolean', false, null, 'Maps');
+
 
     //Shrine - U1
     document.getElementById('finishExpOnBw').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -669,6 +691,9 @@ function initializeAllSettings() {
     createSetting('Hshrineamount', 'AutoShrine: Amount', 'amount', 'multiValue', [-1], null, 'Maps');
     createSetting('Hshrinecharge', 'AutoShrine: Charge', 'charge count you will never see this setting hehehehe', 'value', 0, null, 'Maps');
   
+    //Line 3
+    
+
     //RMaps
 
     //Line 1
@@ -728,13 +753,15 @@ function initializeAllSettings() {
 
     //Line 1
     createSetting('MaxStacksForSpire', 'Max Map Bonus for Spire', 'Get max map bonus before running the Spire.', 'boolean', false, null, 'Spire');
-    createSetting('MinutestoFarmBeforeSpire', 'Farm Before Spire', 'Farm level 200/199(or BW) maps for X minutes before continuing onto attempting Spire.<br><b>NOTE:</b> Set 0 to disable entirely (default). <br>Setting to -1/Infinite does not work here, set a very high number instead. **PLEASE DO NOT USE THIS IT MAY NOT WORK AND I CANNOT FIX IT**', 'value', '0', null, 'Spire');
+    createSetting('MinutestoFarmBeforeSpire', 'Farm Before Spire', 'Farm level 200/199(or BW) maps for X minutes before continuing onto attempting Spire.<br><b>NOTE: Obsolete. Prefer to use Exit Cell instead.</b><br><b>NOTE:</b> Set 0 to disable entirely (default). <br>Setting to -1/Infinite does not work here, set a very high number instead.', 'value', '0', null, 'Spire');
     createSetting('IgnoreSpiresUntil', 'Ignore Spires Until', 'Spire specific settings like end-at-cell are ignored until at least this zone is reached (0 to disable).<br>Does not work with Run Bionic Before Spire.', 'value', '200', null, 'Spire');
-    createSetting('ExitSpireCell', 'Exit Spire After Cell', 'Optional/Rare. Exits the Spire early, after completing cell X. example: 40 for Row 4. (use 0 or -1 to disable)', 'value', '-1', null, 'Spire');
+    createSetting('ExitSpireCell', 'Exit Spire After Cell', 'This is the recommended way to go about the Spire in this fork. AT will farm just enough Health & Damage to beat the cell you defined here, then exit the Spire. For example: 40 for Row 4. (use 0 or -1 to disable)', 'value', '-1', null, 'Spire');
     createSetting('SpireBreedTimer', 'Spire Breed Timer', '<b>ONLY USE IF YOU USE VANILLA GA</b>Set a time for your GA in spire. Recommend not touching GA during this time. ', 'value', -1, null, 'Spire');
     createSetting('PreSpireNurseries', 'Nurseries pre-Spire', 'Set the maximum number of Nurseries to build for Spires. Overrides No Nurseries Until z and Max Nurseries so you can keep them seperate! Will build nurseries before z200 for Spire 1, but only on the zone of Spires 2+ to avoid unnecessary burning. Disable with -1.', 'value', -1, null, 'Spire');
     createSetting('spireshitbuy', 'Buy Gear in Spire', 'Will buy Weapons and Armor in Spire regardless of your H:D ratio. Respects your max gear level and ignore spires setting. ', 'boolean', false, null, 'Spire');
-    createSetting('SkipSpires', 'Skip Spires', 'Will disregard your H:D ratio after Farm Before Spire is done (if set). Useful to die in spires if farming takes too long', 'boolean', false, null, 'Spire');
+    createSetting('SkipSpires', 'Skip Spires', 'Will disregard your H:D ratio after Farm Before Spire is done (if set). Useful to die in spires if farming takes too long. <br><b>NOTE: Obsolete. Prefer to use Exit Cell instead.</b>', 'boolean', false, null, 'Spire');
+    createSetting('SpireHD', 'Spire H:D Mult', "This value will replace your <b>mapCutOff</b> and <b>farming H:D</b> settings, but it only works at active Spires. Keep in mind that 4 actually 1 hit in D stance. <br>Try to find a value that will minimize farming, while still ensuring you won't run out of lives before hitting your target row.<br>Usually, that means low damage, high health for the first clears, then the opposite to save nurseries.", 'value', '64', null, 'Spire');
+    createSetting('SpireHitsSurvived', 'Spire Hits Mult', "This value will replace your <b>numHitsSurvived</b> setting, but it only works at active Spires. Keep in mind that 0.25 actually means you survive 1 hit in H stance. <br>Try to find a value that will minimize farming, while still ensuring you won't run out of lives before hitting your target row.", 'value', '10', null, 'Spire');
 
 
     //Raiding
@@ -786,9 +813,9 @@ function initializeAllSettings() {
     //ATGA
 
     //Line 1
-    createSetting('ATGA2', 'ATGA', '<b>ATGA MASTER BUTTON</b><br>AT Geneticassist. Do not use vanilla GA, as it will conflict otherwise. May get fucky with super high values. ', 'boolean', 'false', null, 'ATGA');
+    createSetting('ATGA2', 'ATGA', '<b>ATGA MASTER BUTTON</b><br>AT Geneticassist. Do not use vanilla GA, as it will conflict otherwise. May get fucky with super high values. ', 'boolean', 'true', null, 'ATGA');
     createSetting('ATGA2gen', 'ATGA: Gen %', '<b>ATGA: Geneassist %</b><br>ATGA will only hire geneticists if they cost less than this value. E.g if this setting is 1 it will only buy geneticists if they cost less than 1% of your food. Default is 1%. ', 'value', '1', null, 'ATGA');
-    createSetting('ATGA2timer', 'ATGA: Timer', '<b>ATGA Timer</b><br>This is the default time your ATGA will use. ', 'value', '-1', null, 'ATGA');
+    createSetting('ATGA2timer', 'ATGA: Timer', '<b>ATGA Timer</b><br>This is the default time your ATGA will use. ', 'value', '30', null, 'ATGA');
 
     //Zone Timers
     document.getElementById('ATGA2timer').parentNode.insertAdjacentHTML('afterend', '<br>');
@@ -811,7 +838,7 @@ function initializeAllSettings() {
     //C2 Timers
     document.getElementById('dhATGA2timer').parentNode.insertAdjacentHTML('afterend', '<br>');
     createSetting('cATGA2timer', 'ATGA: T: C2', '<b>ATGA Timer: C2s</b><br>ATGA will use this value in C2s. Overwrites Default, Before Z and After Z. ', 'value', '-1', null, 'ATGA');
-    createSetting('chATGA2timer', 'ATGA: T: C: Hard', '<b>ATGA Timer: Hard C2s</b><br>ATGA will use this value in C2s that are considered Hard. Electricity, Nom, Toxicity. Overwrites Default, Before Z and After Z and C2 ATGA', 'value', '-1', null, 'ATGA');
+    createSetting('chATGA2timer', 'ATGA: T: C: Hard', '<b>ATGA Timer: Hard C2s</b><br>ATGA will use this value in C2s that are considered Hard. Electricity, Nom, Toxicity. Overwrites Default, Before Z and After Z and C2 ATGA', 'value', '3', null, 'ATGA');
 
 
 
@@ -839,6 +866,9 @@ function initializeAllSettings() {
 
     //Nurture
     createSetting('Rnurtureon', 'Nurture', 'Enables the Lab setting in Buildings and building labs through it. ', 'boolean', 'false', null, 'Challenges');
+    //Challenges
+    createSetting('DecayStacksToPush', 'Decay: Stacks to Push', 'During Decay, AT will ignore maps and push to end the zone if we go above this amount of stacks.<br><br>Use -1 or 0 to disable.<br>Defaults to 300.', 'value', '300', null, 'Challenges');
+    createSetting('DecayStacksToAbandon', 'Decay: Stacks to Abandon', 'During Decay, AT will abandon the challenge if we go above this amount of stacks.<br><br>Use -1 or 0 to disable.<br>Defaults to 300.', 'value', '600', null, 'Challenges');
 
     //Arch
     createSetting('Rarchon', 'Archaeology', 'Turn on Archaeology settings. ', 'boolean', 'false', null, 'Challenges');
@@ -856,6 +886,7 @@ function initializeAllSettings() {
     createSetting('Rmayhemmap', ['M: Maps Off', 'M: Highest Map', 'M: Smart Map'], 'Control what maps you do to farm M: Attack and/or M: Health. M: Highest map always selects the highest map you have whether it be from Praiding, Time Farming or any you have manually created. M: Smart Map attempts to create a map best suited to the situation. Will calculate if you can survive and kill the map, and will try to buy all the necessary map attributes such as FA. ', 'multitoggle', 0, null, 'Challenges');
 
     //Storm
+    document.getElementById('Rmayhemmap').parentNode.insertAdjacentHTML('afterend', '<br>');
     createSetting('Rstormon', 'Storm', 'Turn on Storm settings. This also controls the entireity of Storm settings. If you turn this off it will not do anything in Storm. ', 'boolean', 'false', null, 'Challenges');
     createSetting('Rstormzone', 'S: Zone', 'What zone to start S: H:D and S: Multiplier. ', 'value', '-1', null, 'Challenges');
     createSetting('RstormHD', 'S: H:D', 'What H:D to use inside Storm. ', 'value', '-1', null, 'Challenges');
@@ -908,21 +939,21 @@ function initializeAllSettings() {
     //Combat
 
     //Line 1
-    createSetting('BetterAutoFight', ['Better AutoFight OFF', 'Better Auto Fight', 'Vanilla'], '3-Way Button, Recommended. Will automatically handle fighting.<br>BAF = Old Algo (Fights if dead, new squad ready, new squad breed timer target exceeded, and if breeding takes under 0.5 seconds<br>BAF3 = Uses vanilla autofight and makes sure you fight on portal. <br> WARNING: If you autoportal with BetterAutoFight disabled, the game may sit there doing nothing until you click FIGHT. (not good for afk) ', 'multitoggle', 1, null, "Combat");
+    createSetting('BetterAutoFight', ['Better AutoFight OFF', 'Better Auto Fight', 'Vanilla'], '3-Way Button, Recommended. Will automatically handle fighting.<br>BAF = Old Algo (Fights if dead, new squad ready, new squad breed timer target exceeded, and if breeding takes under 0.5 seconds<br>BAF3 = Uses vanilla autofight and makes sure you fight on portal. <br> WARNING: If you autoportal with BetterAutoFight disabled, the game may sit there doing nothing until you click FIGHT. (not good for afk) ', 'multitoggle', 2, null, "Combat");
     createSetting('AutoStance', ['Auto Stance OFF', 'Auto Stance', 'D Stance', 'Windstacking'], '<b>Autostance:</b> Automatically swap stances to avoid death. <br><b>D Stance:</b> Keeps you in D stance regardless of Health. <br><b>Windstacking:</b> For use after nature (z230), and will keep you in D stance unless you are windstacking (Only useful if transfer is maxed out and wind empowerment is high). Manages your Heirloom swapping and stance to obtain wind stacks efficiently. You must set your High Dmg and Low Dmg Heirlooms, Windstack H:D or WSMAX H:D where relevant for this to work. ', 'multitoggle', 1, null, "Combat");
     createSetting('IgnoreCrits', ['Safety First', 'Ignore Void Strength', 'Ignore All Crits'], 'No longer switches to B against corrupted precision and/or void strength. <b>Basically we now treat \'crit things\' as regular in both autoStance and autoStance2</b>. In fact it no longer takes precision / strength into account and will manage like a normal enemy, thus retaining X / D depending on your needs. If you\'re certain your block is high enough regardless if you\'re fighting a crit guy in a crit daily, use this! Alternatively, manage the stances yourself.', 'multitoggle', 0, null, 'Combat');
     createSetting('PowerSaving', ['AutoAbandon', 'Don\'t Abandon', 'Only Rush Voids'], '<b>Autoabandon:</b> Considers abandoning trimps for void maps/prestiges.<br><b>Don\'t Abandon:</b> Will not abandon troops, but will still agressively autostance even if it will kill you (WILL NOT ABANDON TRIMPS TO DO VOIDS).<br><b>Only Rush Voids:</b> Considers abandoning trimps for void maps, but not prestiges, still autostances aggressively. <br>Made for Empower daily, and you might find this helpful if you\'re doing Workplace Safety feat. Then again with that I strongly recommend doing it fully manually. Anyway, don\'t blame me whatever happens.<br><b>Note:</b> AT will no longer be able to fix when your scryer gets stuck!', 'multitoggle', 0, null, 'Combat');
     createSetting('ForceAbandon', 'Trimpicide', 'If a new fight group is available and anticipation stacks aren\'t maxed, Trimpicide and grab a new group. Will not abandon in spire. Recommended ON. ', 'boolean', true, null, 'Combat');
-    createSetting('DynamicGyms', 'Dynamic Gyms', 'Designed to limit your block to slightly more than however much the enemy attack is. If MaxGyms is capped or GymWall is set, those will still work, and this will NOT override those (works concurrently), but it will further limit them. In the future it may override, but the calculation is not easy to get right so I dont want it undo-ing other things yet. ', 'boolean', false, null, 'Combat');
+    createSetting('DynamicGyms', 'Dynamic Gyms', 'Designed to limit your block to whichever is higher: the attack of a C99 Snimp or 1 gym more than however much the enemy attack is. If MaxGyms is capped or GymWall is set, those will still work, and this will NOT override those (works concurrently), but it will further limit them. <br><b>Recommended: Always on.</b>', 'boolean', true, null, 'Combat');
     createSetting('AutoRoboTrimp', 'AutoRoboTrimp', 'Use RoboTrimps ability starting at this level, and every 5 levels thereafter. (set to 0 to disable. default 60.) 60 is a good choice for mostly everybody.', 'value', '60', null, 'Combat');
 
     //Line 2
     createSetting('fightforever', 'Fight Always', 'U1: -1 to disable. Sends trimps to fight if they\'re not fighting, regardless of BAF. Has 2 uses. Set to 0 to always send out trimps. Or set a number higher than 0 to enable the H:D function. If the H:D ratio is below this number it will send them out. I.e, this is set to 1, it will send out trimps regardless with the H:D ratio is below 1. ', 'value', '-1', null, 'Combat');
-    createSetting('addpoison', 'Poison Calc', '<b>Experimental. </b><br>Adds poison to the battlecalc. May improve your poison zone speed. ', 'boolean', 'false', null, 'Combat');
-    createSetting('fullice', 'Ice Calc', '<b>Experimental. </b><br>Always calculates your ice to be a consistent level instead of going by the enemy debuff. Stops H:D spazzing out. ', 'boolean', 'false', null, 'Combat');
-    createSetting('45stacks', 'Antistack Calc', '<b>Experimental. </b><br>Always calcs your damage as having full antistacks. Useful for windstacking. ', 'boolean', 'false', null, 'Combat');
-
-
+    createSetting('addpoison', 'Poison Calc', '<b>Experimental. </b><br>Adds poison to the battlecalc. May improve your poison zone speed. ', 'boolean', 'true', null, 'Combat');
+    createSetting('fullice', 'Ice Calc', '<b>Experimental. </b><br>Always calculates your ice to be a consistent level instead of going by the enemy debuff. Stops H:D spazzing out. ', 'boolean', 'true', null, 'Combat');
+    createSetting('45stacks', 'Antistack Calc', '<b>Experimental. </b><br>Always calculates your damage as having full Anticipation Stacks. Useful for Windstacking. ', 'boolean', 'false', null, 'Combat');
+    
+    
     //RCombat
     createSetting('Rfightforever', 'Fight Always', 'U2: -1 to disable. Sends trimps to fight if they\'re not fighting, regardless of BAF. Has 2 uses. Set to 0 to always send out trimps. Or set a number higher than 0 to enable the H:D function. If the H:D ratio is below this number it will send them out. I.e, this is set to 1, it will send out trimps regardless with the H:D ratio is below 1. ', 'value', '-1', null, 'Combat');
     createSetting('Rcalcmaxequality', ['Equality Calc Off', 'EC: On', 'EC: Health'], '<b>Experimental. </b><br>Adds Equality Scaling levels to the battlecalc. Will always calculate equality based on actual scaling levels when its turned off by other settings. Assumes you use Equality Scaling. Turning this on allows in-game Equality Scaling to adjust your Health accordingly. EC: Health only decreases enemies attack in the calculation which may improve speed. ', 'multitoggle', 0, null, 'Combat');
@@ -938,7 +969,7 @@ function initializeAllSettings() {
     createSetting('ScryerUseWhenOverkill', 'Use When Overkill', 'Overrides everything! Toggles stance when we can Overkill in S, giving us double loot with no speed penalty (minimum one overkill, if you have more than 1, it will lose speed) <b>NOTE:</b> This being on, and being able to overkill in S will override ALL other settings <u>(Except never use in spire)</u>. This is a boolean logic shortcut that disregards all the other settings including Min and Max Zone. If you ONLY want to use S during Overkill, as a workaround: turn this on and Min zone: to 9999 and everything else off(red). ', 'boolean', true, null, 'Scryer');
     createSetting('ScryerMinZone', 'Min Zone', 'Minimum zone to start using scryer in.(inclusive) Recommend:(60 or 181). Overkill ignores this. This needs to be On & Valid for the <i>MAYBE</i> option on all other Scryer settings to do anything if Overkill is off. Tip: Use 9999 to disable all Non-Overkill, Non-Force, scryer usage.', 'value', '181', null, 'Scryer');
     createSetting('ScryerMaxZone', 'Max Zone', '<b>0 or -1 to disable (Recommended)</b><br>Overkill ignores this. Zone to STOP using scryer at (not inclusive). Turning this ON with a positive number stops <i>MAYBE</i> use of all other Scryer settings.', 'value', '230', null, 'Scryer');
-    createSetting('onlyminmaxworld', 'World Min & Max Only', 'Forces Scryer to only work in world regardless of other settings. ', 'boolean', false, null, 'Scryer');
+    createSetting('onlyminmaxworld', ['Min & Max: Everywhere', 'Min & Max: World', 'Min & Max: Corrupted Only', 'Min & Max: Healthy Only'], 'Further restricts scrying usage based on the current world zone.<br><br><b>Everywhere:</b> Places set as MAYBE are affected by Min & Max Range.<br><b>World:</b> Only the World is affected by Min & Max zones.<br><b>Corrupted:</b> Only Corrupted and Healthy enemies in the World are affected.<br><b>Healthy:</b> Only Healthy enemies in the World are affected.', 'multitoggle', 2, null, 'Scryer');
     createSetting('ScryerUseinMaps2', ['Maps: NEVER', 'Maps: FORCE', 'Maps: MAYBE'], '<b>NEVER</b> Means what it says!!!<br><b>FORCE</b> means Scryer will ALWAYS activate in Maps<br><b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br>This setting requires use on Corrupteds to be on after corruption/magma.<br><br>Recommend MAYBE.', 'multitoggle', 2, null, 'Scryer');
     createSetting('ScryerUseinVoidMaps2', ['VoidMaps: NEVER', 'VoidMaps: FORCE', 'VoidMaps: MAYBE'], '<b>NEVER</b> Means what it says!!!<br><b>FORCE</b> means Scryer will ALWAYS activate in Void Maps<br><b>MAYBE</b> means that Overkill and Min/Max use are allowed. ', 'multitoggle', 0, null, 'Scryer');
 
@@ -947,7 +978,7 @@ function initializeAllSettings() {
     createSetting('ScryerUseinBW', ['BW: NEVER', 'BW: FORCE', 'BW: MAYBE'], '<b>NEVER</b> Means what it says!!!<br><b>FORCE</b> means Scryer will ALWAYS activate in BW Maps<br><b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br>This setting requires use in Maps to be on. <br><br>Recommend NEVER.', 'multitoggle', 0, null, 'Scryer');
     createSetting('ScryerUseinSpire2', ['Spire: NEVER', 'Spire: FORCE', 'Spire: MAYBE'], '<b>NEVER</b> Means what it says!!!<br><b>FORCE</b> means Scryer will ALWAYS activate in the Spire<br><b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br>This setting requires use on Corrupteds to be on for corrupted enemies.<br><br>Recommend NEVER.', 'multitoggle', 0, null, 'Scryer');
     createSetting('ScryerSkipBoss2', ['Boss: NEVER (All Levels)', 'Boss: NEVER (Above VoidLevel)', 'Boss: MAYBE'], '<b>NEVER (All Levels)</b> will NEVER use S in cell 100 of the world!!!<br><b>NEVER (Above VoidLevel)</b> will NEVER use S in cell 100 of the world ABOVE the zone that your void maps are set to run at (Maps).<br><b>MAYBE</b> treats the cell no differently to any other, Overkill and Min/Max Scryer is allowed.<br><br>Recommend NEVER (There is little benefit to double NON-HELIUM resources and a small chance of DE).', 'multitoggle', 0, null, 'Scryer');
-    createSetting('ScryerSkipCorrupteds2', ['Corrupted: NEVER', 'Corrupted: FORCE', 'Corrupted: MAYBE'], '<b>NEVER</b> Means what it says!!!<br><b>FORCE</b> means Scryer will ALWAYS activate against Corrupted enemies<br><b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br><b>Magma maps and Corrupted Voidmaps are currently classified as corrupted</b> and NEVER here will override Maps and Voidmaps use of Scryer<br><br>Recommend MAYBE.', 'multitoggle', 2, null, 'Scryer');
+    createSetting('ScryerSkipCorrupteds2', ['Corrupted: NEVER', 'Corrupted: FORCE', 'Corrupted: MAYBE'], '<b>NEVER</b> Means what it says!!!<br><b>FORCE</b> means Scryer will ALWAYS activate against Corrupted enemies<br><b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br><b>Magma maps and Corrupted Voidmaps are currently classified as corrupted</b> and NEVER here will override Maps and Voidmaps use of Scryer<br><br>Recommend NEVER, then MAYBE once you have ScryHard I.', 'multitoggle', 0, null, 'Scryer');
     createSetting('ScryerSkipHealthy', ['Healthy: NEVER', 'Healthy: FORCE', 'Healthy: MAYBE'], '<b>NEVER</b> Means what it says!!!<br><b>FORCE</b> means Scryer will ALWAYS activate against Healthy enemies<br><b>MAYBE</b> means that Overkill and Min/Max use are allowed.<br><b>Corrupted Voidmaps are currently classified as Healthy (same as corrupted)</b> and NEVER here will override Maps and Voidmaps use of Scryer<br><br>Recommend MAYBE.', 'multitoggle', 2, null, 'Scryer');
     createSetting('ScryUseinPoison', 'Scry in Poison', 'Decides what you do in Poison. <br><b>-1</b> = Maybe <br><b>0</b> = Never <br><b>Above 0</b> = Max Zone you want it scrying ', 'value', -1, null, 'Scryer');
 
@@ -955,21 +986,24 @@ function initializeAllSettings() {
     createSetting('ScryUseinWind', 'Scry in Wind', 'Decides what you do in Wind. <br><b>-1</b> = Maybe <br><b>0</b> = Never <br><b>Above 0</b> = Max Zone you want it scrying', 'value', -1, null, 'Scryer');
     createSetting('ScryUseinIce', 'Scry in Ice', 'Decides what you do in Ice. <br><b>-1</b> = Maybe <br><b>0</b> = Never <br><b>Above 0</b> = Max Zone you want it scrying', 'value', -1, null, 'Scryer');
     createSetting('ScryerDieZ', 'Die To Use S', '<b>-1 to disable.</b><br>Turning this on will switch you back to S even when doing so would kill you. Happens in scenarios where you used Skip Corrupteds that took you into regular Autostance X/H stance, killed the corrupted and reached a non-corrupted enemy that you wish to use S on, but you havent bred yet and you are too low on health to just switch back to S. So you\'d rather die, wait to breed, then use S for the full non-corrupted enemy, to maximize DE. NOTE: Use at your own risk.<br>Use this input to set the minimum zone that scryer activates in (You can use decimal values to specify what cell this setting starts from)', 'value', 230.60, null, 'Scryer');
-    createSetting('screwessence', 'Remaining Essence Only', 'Why scry when theres no essence? Turns off scrying when the remaining enemies with essence drops to 0. ', 'boolean', false, null, 'Scryer');
+    createSetting('screwessence', 'Remaining Essence Only', 'Why scry when theres no essence? Turns off scrying when the remaining enemies with essence drops to 0. ', 'boolean', true, null, 'Scryer');
+    createSetting('ScryerMinAtFuel', 'Scryer Min Zone At Fuel', 'If enabled and your HZE is at least z240, AT will adjust the <b>Scryer Min Zone</b> setting to your <b>Fuel Start Zone</b>.<br>Requires <b>Auto Generator</b> to be enabled.', 'boolean', true, null, 'Scryer');
+    createSetting('ScryerHDDiv', 'Scryer H:D Div', "This is a <b>divider</b> to your <b>mapCutOff</b> and <b>farming H:D</b>, and only works when scrying on Corrupted or if DieToS is enabled. Domination ignores this. Values below 1 will make AT require <b>more</b> damage when scrying versus corrupted cells, which is usually NOT what you want, because AT already accounts for Corrupted Strength. <br>Something around 4 seems to work well.", 'value', '4', null, 'Scryer');
+    createSetting('ScryerHitsMult', 'Scryer Hits Mult', "This is a multiplier to your <b>numHitsSurvived</b>, and only works when scrying on Corrupted or if DieToS is enabled. Domination ignores this. Values below 1 will make AT require <b>less</b> health, but unless pushing, you want it to be higher to compensate for Corrupted Sharpness. <br>Something around 8 seems to be fine.", 'value', '8', null, 'Scryer');
 
 
     //Magma
-
-    createSetting('UseAutoGen', 'Auto Generator', 'Turn this on to use these settings. ', 'boolean', false, null, 'Magma');
-    createSetting('beforegen', ['Gain Mi', 'Gain Fuel', 'Hybrid'], '<b>MODE BEFORE FUELING: </b>Which mode to use before fueling. This is the mode which the generator will use if you fuel after z230. ', 'multitoggle', 1, null, 'Magma');
+    createSetting('UseAutoGen', 'Auto Generator', 'Turn this on to use these settings. ', 'boolean', true, null, 'Magma');
+    createSetting('AutoFuelZone', 'Auto Fuel Zone', 'If enabled, AT will automatically adjust your <b>Start Fuel Z</b> setting to <b>Zones Before Max Supply</b> zones before your max supply zone, and your <b>End Fuel Z</b> to <b>Total Fuel Zones</b> zones after that.<br>However, if you do not have Overclocker yet, it will simply use Hybrid mode instead.', 'boolean', true, null, 'Magma');
+    createSetting('beforegen', ['Gain Mi', 'Gain Fuel', 'Hybrid'], '<b>MODE BEFORE FUELING: </b>Which mode to use before fueling. This is the mode which the generator will use if you fuel after z230.<br>If you choose Hybrid before buying the upgrade, it will fuel until you are full tank, then get Mi until it reaches the fuel zone.', 'multitoggle', 1, null, 'Magma');
     createSetting('fuellater', 'Start Fuel Z', 'Start fueling at this zone instead of 230. I would suggest you have a value lower than your max, for obvious reasons. Recommend starting at a value close-ish to your max supply. Use 230 to use your <b>BEFORE FUEL</b> setting. ', 'value', -1, null, 'Magma');
     createSetting('fuelend', 'End Fuel Z', 'End fueling at this zone. After this zone is reached, will follow your preference. -1 to fuel infinitely. ', 'value', -1, null, 'Magma');
-    createSetting('defaultgen', ['Gain Mi', 'Gain Fuel', 'Hybrid'], '<b>MODE AFTER FUELING: </b>Which mode to use after fueling. ', 'multitoggle', 1, null, 'Magma');
-    createSetting('AutoGenDC', ['Daily: Normal', 'Daily: Fuel', 'Daily: Hybrid'], '<b>Normal:</b> Uses the AutoGen settings. <br><b>Fuel:</b> Fuels the entire Daily. <br><b>Hybrid:</b> Uses Hybrid for the entire Daily. ', 'multitoggle', 1, null, 'Magma');
-    createSetting('AutoGenC2', ['C2: Normal', 'C2: Fuel', 'C2: Hybrid'], '<b>Normal:</b> Uses the AutoGen settings. <br><b>Fuel:</b> Fuels the entire C2. <br><b>Hybrid:</b> Uses Hybrid for the entire C2. ', 'multitoggle', 1, null, 'Magma');
+    createSetting('defaultgen', ['Gain Mi', 'Gain Fuel', 'Hybrid'], '<b>MODE AFTER FUELING: </b>Which mode to use after fueling.<br>If you choose Hybrid before buying the upgrade, it will switch to Mi mode until the end of the run.', 'multitoggle', 1, null, 'Magma');
+    createSetting('AutoGenDC', ['Daily: Normal', 'Daily: Fuel', 'Daily: Hybrid'], '<b>Normal:</b> Uses the AutoGen settings. <br><b>Fuel:</b> Fuels the entire Daily. <br><b>Hybrid:</b> Uses Hybrid for the entire Daily. ', 'multitoggle', 0, null, 'Magma');
+    createSetting('AutoGenC2', ['C2: Normal', 'C2: Fuel', 'C2: Hybrid'], '<b>Normal:</b> Uses the AutoGen settings. <br><b>Fuel:</b> Fuels the entire C2. <br><b>Hybrid:</b> Uses Hybrid for the entire C2. ', 'multitoggle', 0, null, 'Magma');
 
     //Spend Mi
-    document.getElementById('AutoGenC2').parentNode.insertAdjacentHTML('afterend', '<br>');
+    document.getElementById('defaultgen').parentNode.insertAdjacentHTML('afterend', '<br>');
     createSetting('spendmagmite', ['Spend Magmite OFF', 'Spend Magmite (Portal)', 'Spend Magmite Always'], 'Auto Spends any unspent Magmite immediately before portaling. (Or Always, if toggled). Part 1 buys any permanent one-and-done upgrades in order from most expensive to least. Part 2 then analyzes Efficiency vs Capacity for cost/benefit, and buys Efficiency if its BETTER than Capacity. If not, if the PRICE of Capacity is less than the price of Supply, it buys Capacity. If not, it buys Supply. And then it repeats itself until you run out of Magmite and cant buy anymore. ', 'multitoggle', 1, null, 'Magma');
     createSetting('ratiospend', 'Ratio Spending', 'Spends Magmite in a Ratio you define. ', 'boolean', false, null, 'Magma');
     createSetting('effratio', 'Efficiency', 'Use -1 or 0 to not spend on this. Any value above 0 will spend. ', 'value', -1, null, 'Magma');
@@ -979,6 +1013,8 @@ function initializeAllSettings() {
     createSetting('SupplyWall', 'Throttle Supply (or Capacity)', 'Positive number NOT 1 e.g. 2.5: Consider Supply when its cost * 2.5 is < Capacity, instead of immediately when < Cap. Effectively throttles supply for when you don\'t need too many.<br><br>Negative number (-1 is ok) e.g. -2.5: Consider Supply if it costs < Capacity * 2.5, buy more supplys! Effectively throttling capacity instead.<br><br><b>Set to 1: DISABLE SUPPLY only spend magmite on Efficiency, Capacity and Overclocker. Always try to get supply close to your HZE. <br>Set to 0: IGNORE SETTING and use old behaviour (will still try to buy overclocker)</b>', 'valueNegative', 0.4, null, 'Magma');
     createSetting('spendmagmitesetting', ['Normal', 'Normal & No OC', 'OneTime Only', 'OneTime & OC'], '<b>Normal:</b> Spends Magmite Normally as Explained in Magmite spending behaviour. <br><b>Normal & No OC:</b> Same as normal, except skips OC afterbuying 1 OC upgrade. <br><b>OneTime Only:</b> Only Buys the One off upgrades except skips OC afterbuying 1 OC upgrade. <br><b>OneTime & OC:</b> Buys all One off upgrades, then buys OC only. ', 'multitoggle', 0, null, 'Magma');
     createSetting('MagmiteExplain', 'Magmite spending behaviour', '1. Buy one-and-done upgrades, expensive first, then consider 1st level of Overclocker;<br>2. Buy Overclocker IF AND ONLY IF we can afford it;<br>2.5. Exit if OneTimeOnly<br>3. Buy Efficiency if it is better than capacity;<br>4. Buy Capacity or Supply depending on which is cheaper, or based on SupplyWall', 'infoclick', 'MagmiteExplain', null, 'Magma');
+    createSetting('ZonesBeforeSupply', 'Zones Before Max Supply', 'How many zones before your max supply zone to start fueling at.<br>Use with AutoGen and Auto Fuel Zone.', 'value', 5, null, 'Magma');
+    createSetting('TotalZonesToFuel', 'Total Zones to Fuel', 'How many zones to fuel for, starting at your max supply zone, minus your <b>Zones Before Max Supply</b> setting.<br>Use with AutoGen and Auto Fuel Zone.', 'value', 20, null, 'Magma');
 
     //Heirloom
     createSetting('highdmg', 'WS: High Damage', '<b>HIGH DAMAGE HEIRLOOM</b><br><br>Enter the name of your high damage heirloom. This is your heirloom that you will use normally. ', 'textValue', 'undefined', null, 'Heirlooms');
@@ -1155,7 +1191,7 @@ function initializeAllSettings() {
     createSetting('SpamMagmite', 'Magmite/Magma Spam', 'Everything in Magmite Module and Buy Magmamancers', 'boolean', true, null, 'Display');
     createSetting('SpamPerks', 'AutoPerks Spam', 'Everything in related to AutoPerks', 'boolean', true, null, 'Display');
     createSetting('SpamNature', 'Nature Spam', 'Everything in related to Nature', 'boolean', true, null, 'Display');
-
+    createSetting('SpamDevDebug', 'Dev Debug', 'Enable dev debug messages from all modules. You most likely don\'t want this.', 'boolean', false, null, 'Display');
 
 
     //Export/Import/Default
@@ -1393,13 +1429,8 @@ function settingChanged(id) {
     }
     if (btn.type == 'dropdown') {
         btn.selected = document.getElementById(id).value;
-        if (id == "Prestige") {
-            autoTrimpSettings["PrestigeBackup"] = {
-                selected: document.getElementById(id).value,
-                name: "PrestigeBackup",
-                id: "PrestigeBackup"
-            };
-        }
+        if (id == "Prestige" && autoTrimpSettings["PrestigeBackup"])
+            autoTrimpSettings["PrestigeBackup"].selected = document.getElementById(id).value;
     }
     updateCustomButtons();
     saveSettings();
@@ -1495,8 +1526,10 @@ function autoSetValue(id, negative, multi) {
     } else return;
     autoTrimpSettings[id].value = num;
     if (Array.isArray(num)) {
+        // In here
         document.getElementById(id).textContent = ranstring + ': ' + num[0] + '+';
-    } else if (num > -1 || negative)
+    }
+    else if (num > -1 || negative)
         document.getElementById(id).textContent = ranstring + ': ' + prettify(num);
     else
         document.getElementById(id).innerHTML = ranstring + ': ' + "<span class='icomoon icon-infinity'></span>";
@@ -1673,6 +1706,7 @@ function updateCustomButtons() {
     !radonon ? turnOn("avoidempower") : turnOff("avoidempower");
     !radonon ? turnOn("dfightforever") : turnOff("dfightforever");
     !radonon ? turnOn("darmormagic") : turnOff("darmormagic");
+    !radonon ? turnOn("dMaxMapBonushealth"): turnOff("dMaxMapBonushealth");
 
     //DRaid
     !radonon ? turnOn("dPraidingzone") : turnOff("dPraidingzone");
@@ -1804,28 +1838,29 @@ function updateCustomButtons() {
 
 
     //Buildings
-    !radonon ? turnOn("BuyBuildingsNew") : turnOff("BuyBuildingsNew");
-    !radonon ? turnOn("MaxGym") : turnOff("MaxGym");
-    !radonon ? turnOn("GymWall") : turnOff("GymWall");
-    var fuckbuilding = (bwRewardUnlocked("AutoStructure") == true && bwRewardUnlocked("DecaBuild") && getPageSetting('hidebuildings') == true && getPageSetting('BuyBuildingsNew') == 0);
-    (!radonon && bwRewardUnlocked("AutoStructure") == true && bwRewardUnlocked("DecaBuild")) ? turnOn("hidebuildings"): turnOff("hidebuildings");
-    (!radonon && !fuckbuilding) ? turnOn("MaxHut"): turnOff("MaxHut");
-    (!radonon && !fuckbuilding) ? turnOn("MaxHouse"): turnOff("MaxHouse");
-    (!radonon && !fuckbuilding) ? turnOn("MaxMansion"): turnOff("MaxMansion");
-    (!radonon && !fuckbuilding) ? turnOn("MaxHotel"): turnOff("MaxHotel");
-    (!radonon && !fuckbuilding) ? turnOn("MaxResort"): turnOff("MaxResort");
-    (!radonon && !fuckbuilding) ? turnOn("MaxGateway"): turnOff("MaxGateway");
-    (!radonon && !fuckbuilding) ? turnOn("MaxWormhole"): turnOff("MaxWormhole");
-    (!radonon && !fuckbuilding) ? turnOn("MaxCollector"): turnOff("MaxCollector");
-    (!radonon && !fuckbuilding) ? turnOn("MaxTribute"): turnOff("MaxTribute");
-    (!radonon && !fuckbuilding) ? turnOn("MaxNursery"): turnOff("MaxNursery");
-    (!radonon && !fuckbuilding) ? turnOn("NoNurseriesUntil"): turnOff("NoNurseriesUntil");
-    (!radonon && !fuckbuilding) ? turnOn("WarpstationCap"): turnOff("WarpstationCap");
-    (!radonon && !fuckbuilding) ? turnOn("WarpstationCoordBuy"): turnOff("WarpstationCoordBuy");
-    (!radonon && !fuckbuilding) ? turnOn("FirstGigastation"): turnOff("FirstGigastation");
-    (!radonon && !fuckbuilding) ? turnOn("DeltaGigastation"): turnOff("DeltaGigastation");
-    (!radonon && !fuckbuilding) ? turnOn("WarpstationWall3"): turnOff("WarpstationWall3");
-
+    var gemNoLimit = getPageSetting('GemEfficiencyIgnoresMax');
+    var foodNoLimit = getPageSetting('FoodEfficiencyIgnoresMax');
+    var fuckbuilding = (bwRewardUnlocked("AutoStructure") == true && bwRewardUnlocked("DecaBuild") && getPageSetting('hidebuildings')==true && getPageSetting('BuyBuildingsNew')==0);
+    !radonon ? turnOn("BuyBuildingsNew"): turnOff("BuyBuildingsNew");
+    !radonon ? turnOn("MaxGym"): turnOff("MaxGym");
+    !radonon ? turnOn("GymWall"): turnOff("GymWall");
+    (!radonon && bwRewardUnlocked("AutoStructure") == true && bwRewardUnlocked("DecaBuild")) ? turnOn("hidebuildings") : turnOff("hidebuildings");
+    (!radonon && !fuckbuilding && !foodNoLimit) ? turnOn("MaxHut") : turnOff("MaxHut");
+    (!radonon && !fuckbuilding && !foodNoLimit) ? turnOn("MaxHouse") : turnOff("MaxHouse");
+    (!radonon && !fuckbuilding && (!gemNoLimit || !foodNoLimit)) ? turnOn("MaxMansion") : turnOff("MaxMansion");
+    (!radonon && !fuckbuilding && (!gemNoLimit || !foodNoLimit)) ? turnOn("MaxHotel") : turnOff("MaxHotel");
+    (!radonon && !fuckbuilding && (!gemNoLimit || !foodNoLimit)) ? turnOn("MaxResort") : turnOff("MaxResort");
+    (!radonon && !fuckbuilding) ? turnOn("MaxGateway") : turnOff("MaxGateway");
+    (!radonon && !fuckbuilding) ? turnOn("MaxWormhole") : turnOff("MaxWormhole");
+    (!radonon && !fuckbuilding && !gemNoLimit) ? turnOn("MaxCollector") : turnOff("MaxCollector");
+    (!radonon && !fuckbuilding) ? turnOn("MaxTribute") : turnOff("MaxTribute");
+    (!radonon && !fuckbuilding) ? turnOn("MaxNursery") : turnOff("MaxNursery");
+    (!radonon && !fuckbuilding) ? turnOn("NoNurseriesUntil") : turnOff("NoNurseriesUntil");
+    (!radonon && !fuckbuilding) ? turnOn("WarpstationCap") : turnOff("WarpstationCap");
+    (!radonon && !fuckbuilding) ? turnOn("WarpstationCoordBuy") : turnOff("WarpstationCoordBuy");
+    (!radonon && !fuckbuilding) ? turnOn("FirstGigastation") : turnOff("FirstGigastation");
+    (!radonon && !fuckbuilding) ? turnOn("DeltaGigastation") : turnOff("DeltaGigastation");
+    (!radonon && !fuckbuilding) ? turnOn("WarpstationWall3") : turnOff("WarpstationWall3");
 
     //RBuildings
     radonon ? turnOn("RBuyBuildingsNew") : turnOff("RBuyBuildingsNew");
@@ -1892,8 +1927,7 @@ function updateCustomButtons() {
 
 
     //RGear
-
-    radonon ? turnOn("Requipon") : turnOff("Requipon");
+    radonon ? turnOn("Requipon"): turnOff("Requipon");
     (radonon && getPageSetting('Requipon') == true) ? turnOn("Requipamount"): turnOff("Requipamount");
     (radonon && getPageSetting('Requipon') == true) ? turnOn("Requipcapattack"): turnOff("Requipcapattack");
     (radonon && getPageSetting('Requipon') == true) ? turnOn("Requipcaphealth"): turnOff("Requipcaphealth");
@@ -1911,7 +1945,9 @@ function updateCustomButtons() {
 
 
     //Maps
-    !radonon ? turnOn("AutoMaps") : turnOff("AutoMaps");
+    
+    !radonon ? turnOn("AutoMaps"): turnOff("AutoMaps");
+    !radonon ? turnOn("automapsportal"): turnOff("automapsportal");
     (!radonon && getPageSetting('AutoMaps') == 2) ? turnOn("AMUblock") : turnOff("AMUblock");
     (!radonon && getPageSetting('AutoMaps') == 2) ? turnOn("AMUwall") : turnOff("AMUwall");
     (!radonon && getPageSetting('AutoMaps') == 2) ? turnOn("AMUanger") : turnOff("AMUanger");
@@ -1919,28 +1955,23 @@ function updateCustomButtons() {
     (!radonon && getPageSetting('AutoMaps') == 2) ? turnOn("AMUprison") : turnOff("AMUprison");
     (!radonon && getPageSetting('AutoMaps') == 2) ? turnOn("AMUbw") : turnOff("AMUbw");
     (!radonon && getPageSetting('AutoMaps') == 2) ? turnOn("AMUstar") : turnOff("AMUstar");
-    !radonon ? turnOn("automapsportal") : turnOff("automapsportal");
-    
-    
-    !radonon ? turnOn("mapselection") : turnOff("mapselection");
-    !radonon ? turnOn("DynamicSiphonology") : turnOff("DynamicSiphonology");
-    !radonon ? turnOn("PreferMetal") : turnOff("PreferMetal");
-    !radonon ? turnOn("MaxMapBonusAfterZone") : turnOff("MaxMapBonusAfterZone");
-    !radonon ? turnOn("MaxMapBonuslimit") : turnOff("MaxMapBonuslimit");
-    !radonon ? turnOn("MaxMapBonushealth") : turnOff("MaxMapBonushealth");
-    !radonon ? turnOn("mapcuntoff") : turnOff("mapcuntoff");
-    !radonon ? turnOn("DisableFarm") : turnOff("DisableFarm");
-    !radonon ? turnOn("LowerFarmingZone") : turnOff("LowerFarmingZone");
-    !radonon ? turnOn("FarmWhenNomStacks7") : turnOff("FarmWhenNomStacks7");
-    !radonon ? turnOn("VoidMaps") : turnOff("VoidMaps");
-    !radonon ? turnOn("voidscell") : turnOff("voidscell");
-    !radonon ? turnOn("RunNewVoidsUntilNew") : turnOff("RunNewVoidsUntilNew");
-    !radonon ? turnOn("runnewvoidspoison") : turnOff("runnewvoidspoison");
-    !radonon ? turnOn("onlystackedvoids") : turnOff("onlystackedvoids");
-    !radonon ? turnOn("TrimpleZ") : turnOff("TrimpleZ");
+
+    !radonon ? turnOn("MaxMapBonusAfterZone"): turnOff("MaxMapBonusAfterZone");
+    !radonon ? turnOn("MaxMapBonuslimit"): turnOff("MaxMapBonuslimit");
+    !radonon ? turnOn("MaxMapBonushealth"): turnOff("MaxMapBonushealth");
+    !radonon ? turnOn("mapcuntoff"): turnOff("mapcuntoff");
+    !radonon ? turnOn("DisableFarm"): turnOff("DisableFarm");
+    !radonon ? turnOn("LowerFarmingZone"): turnOff("LowerFarmingZone");
+    !radonon ? turnOn("FarmWhenNomStacks7"): turnOff("FarmWhenNomStacks7");
+    !radonon ? turnOn("VoidMaps"): turnOff("VoidMaps");
+    !radonon ? turnOn("voidscell"): turnOff("voidscell");
+    !radonon ? turnOn("RunNewVoidsUntilNew"): turnOff("RunNewVoidsUntilNew");
+    !radonon ? turnOn("runnewvoidspoison"): turnOff("runnewvoidspoison");
+    !radonon ? turnOn("onlystackedvoids"): turnOff("onlystackedvoids");
+    !radonon ? turnOn("TrimpleZ"): turnOff("TrimpleZ");
+    !radonon ? turnOn("scryvoidmaps"): turnOff("scryvoidmaps");
+    !radonon ? turnOn("buywepsvoid"): turnOff("buywepsvoid");
     !radonon ? turnOn("AdvMapSpecialModifier") : turnOff("AdvMapSpecialModifier");
-    !radonon ? turnOn("scryvoidmaps") : turnOff("scryvoidmaps");
-    !radonon ? turnOn("buywepsvoid") : turnOff("buywepsvoid");
     !radonon ? turnOn("farmWonders") : turnOff("farmWonders");
     (!radonon && getPageSetting("farmWonders")) ? turnOn("wondersAmount") : turnOff("wondersAmount");
     (!radonon && getPageSetting("farmWonders")) ? turnOn("maxExpZone") : turnOff("maxExpZone");
@@ -2256,36 +2287,39 @@ function updateCustomButtons() {
 
 
     //Scryer
-    !radonon ? turnOn("UseScryerStance") : turnOff("UseScryerStance");
-    !radonon ? turnOn("ScryerUseWhenOverkill") : turnOff("ScryerUseWhenOverkill");
-    !radonon ? turnOn("ScryerMinZone") : turnOff("ScryerMinZone");
-    !radonon ? turnOn("ScryerMaxZone") : turnOff("ScryerMaxZone");
-    !radonon ? turnOn("onlyminmaxworld") : turnOff("onlyminmaxworld");
-    !radonon ? turnOn("ScryerUseinMaps2") : turnOff("ScryerUseinMaps2");
-    !radonon ? turnOn("ScryerUseinVoidMaps2") : turnOff("ScryerUseinVoidMaps2");
-    !radonon ? turnOn("ScryerUseinPMaps") : turnOff("ScryerUseinPMaps");
-    !radonon ? turnOn("ScryerUseinBW") : turnOff("ScryerUseinBW");
-    !radonon ? turnOn("ScryerUseinSpire2") : turnOff("ScryerUseinSpire2");
-    !radonon ? turnOn("ScryerSkipBoss2") : turnOff("ScryerSkipBoss2");
-    !radonon ? turnOn("ScryerSkipCorrupteds2") : turnOff("ScryerSkipCorrupteds2");
-    !radonon ? turnOn("ScryerSkipHealthy") : turnOff("ScryerSkipHealthy");
-    !radonon ? turnOn("ScryUseinPoison") : turnOff("ScryUseinPoison");
-    !radonon ? turnOn("ScryUseinWind") : turnOff("ScryUseinWind");
-    !radonon ? turnOn("ScryUseinIce") : turnOff("ScryUseinIce");
-    !radonon ? turnOn("ScryerDieZ") : turnOff("ScryerDieZ");
-    !radonon ? turnOn("screwessence") : turnOff("screwessence");
+    !radonon ? turnOn("UseScryerStance"): turnOff("UseScryerStance");
+    !radonon ? turnOn("ScryerUseWhenOverkill"): turnOff("ScryerUseWhenOverkill");
+    !radonon ? turnOn("ScryerMinZone"): turnOff("ScryerMinZone");
+    !radonon ? turnOn("ScryerMaxZone"): turnOff("ScryerMaxZone");
+    !radonon ? turnOn("onlyminmaxworld"): turnOff("onlyminmaxworld");
+    !radonon ? turnOn("ScryerUseinMaps2"): turnOff("ScryerUseinMaps2");
+    !radonon ? turnOn("ScryerUseinVoidMaps2"): turnOff("ScryerUseinVoidMaps2");
+    !radonon ? turnOn("ScryerUseinPMaps"): turnOff("ScryerUseinPMaps");
+    !radonon ? turnOn("ScryerUseinBW"): turnOff("ScryerUseinBW");
+    !radonon ? turnOn("ScryerUseinSpire2"): turnOff("ScryerUseinSpire2");
+    !radonon ? turnOn("ScryerSkipBoss2"): turnOff("ScryerSkipBoss2");
+    !radonon ? turnOn("ScryerSkipCorrupteds2"): turnOff("ScryerSkipCorrupteds2");
+    !radonon ? turnOn("ScryerSkipHealthy"): turnOff("ScryerSkipHealthy");
+    !radonon ? turnOn("ScryUseinPoison"): turnOff("ScryUseinPoison");
+    !radonon ? turnOn("ScryUseinWind"): turnOff("ScryUseinWind");
+    !radonon ? turnOn("ScryUseinIce"): turnOff("ScryUseinIce");
+    !radonon ? turnOn("ScryerDieZ"): turnOff("ScryerDieZ");
+    !radonon ? turnOn("screwessence"): turnOff("screwessence");
+    !radonon ? turnOn("ScryerMinAtFuel"): turnOff("ScryerMinAtFuel");
 
 
     //Magma
-    !radonon ? turnOn("UseAutoGen") : turnOff("UseAutoGen");
-    !radonon ? turnOn("beforegen") : turnOff("beforegen");
-    !radonon ? turnOn("fuellater") : turnOff("fuellater");
-    !radonon ? turnOn("fuelend") : turnOff("fuelend");
-    !radonon ? turnOn("defaultgen") : turnOff("defaultgen");
-    !radonon ? turnOn("AutoGenDC") : turnOff("AutoGenDC");
-    !radonon ? turnOn("AutoGenC2") : turnOff("AutoGenC2");
-    !radonon ? turnOn("spendmagmite") : turnOff("spendmagmite");
-    !radonon ? turnOn("ratiospend") : turnOff("ratiospend");
+    !radonon ? turnOn("UseAutoGen"): turnOff("UseAutoGen");
+    !radonon ? turnOn("beforegen"): turnOff("beforegen");
+    !radonon ? turnOn("fuellater"): turnOff("fuellater");
+    !radonon ? turnOn("fuelend"): turnOff("fuelend");
+    !radonon ? turnOn("defaultgen"): turnOff("defaultgen");
+    !radonon ? turnOn("AutoGenDC"): turnOff("AutoGenDC");
+    !radonon ? turnOn("AutoGenC2"): turnOff("AutoGenC2");
+    !radonon ? turnOn("spendmagmite"): turnOff("spendmagmite");
+    !radonon ? turnOn("ratiospend"): turnOff("ratiospend");
+    !radonon ? turnOn("AutoFuelZone"): turnOff("AutoFuelZone");
+
     var ratiospend = getPageSetting('ratiospend');
     (!radonon && !ratiospend) ? turnOn("SupplyWall"): turnOff("SupplyWall");
     (!radonon && !ratiospend) ? turnOn("spendmagmitesetting"): turnOff("spendmagmitesetting");
@@ -2295,6 +2329,10 @@ function updateCustomButtons() {
     (!radonon && ratiospend) ? turnOn("supratio"): turnOff("supratio");
     (!radonon && ratiospend) ? turnOn("ocratio"): turnOff("ocratio");
 
+    //Auto Fuel Zone Config
+    (!radonon && getPageSetting('AutoFuelZone')) ? turnOn('ZonesBeforeSupply') : turnOff('ZonesBeforeSupply');
+    (!radonon && getPageSetting('AutoFuelZone')) ? turnOn('TotalZonesToFuel') : turnOff('TotalZonesToFuel');
+    
 
     //Golden
     !radonon ? turnOn("AutoGoldenUpgrades") : turnOff("AutoGoldenUpgrades");
@@ -2419,7 +2457,6 @@ function updateCustomButtons() {
     document.getElementById('RadonHourChallenge').value = autoTrimpSettings.RadonHourChallenge.selected;
     document.getElementById('dHeliumHourChallenge').value = autoTrimpSettings.dHeliumHourChallenge.selected;
     document.getElementById('RdHeliumHourChallenge').value = autoTrimpSettings.RdHeliumHourChallenge.selected;
-    document.getElementById('mapselection').value = autoTrimpSettings.mapselection.selected;
     document.getElementById('Rmapselection').value = autoTrimpSettings.Rmapselection.selected;
     document.getElementById('Prestige').value = autoTrimpSettings.Prestige.selected;
     document.getElementById('AutoGoldenUpgrades').value = autoTrimpSettings.AutoGoldenUpgrades.selected;
@@ -2464,7 +2501,6 @@ function updateCustomButtons() {
     if (game.global.universe == 2 && getPageSetting('RDisableFarm') <= 0)
         RshouldFarm = false;
 
-    MODULES["maps"] && (MODULES["maps"].preferGardens = !getPageSetting('PreferMetal'));
     if (document.getElementById('Prestige').selectedIndex > 11 && game.global.slowDone == false) {
         document.getElementById('Prestige').selectedIndex = 11;
         autoTrimpSettings.Prestige.selected = "Bestplate";
