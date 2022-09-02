@@ -332,7 +332,7 @@ function autoLevelEquipment(hdStats, vmStatus) {
         var gameResource = equip.Equip ? game.equipment[equipName] : game.buildings[equipName];
         if (!gameResource.locked) {
             var $equipName = document.getElementById(equipName);
-            $equipName.style.color = 'white';
+            UpdateEquipColor($equipName, 'white');
             var evaluation = evaluateEquipmentEfficiency(equipName);
             var BKey = equip.Stat + equip.Resource;
 
@@ -346,20 +346,20 @@ function autoLevelEquipment(hdStats, vmStatus) {
             resourcesNeeded[equip.Resource] += Best[BKey].Cost;
 
             if (evaluation.Wall)
-                $equipName.style.color = 'yellow';
-            $equipName.style.border = '1px solid ' + evaluation.StatusBorder;
+                UpdateEquipColor($equipName, 'yellow');
+            UpdateEquipBorder($equipName, '1px solid ' + evaluation.StatusBorder);
 
             var $equipUpgrade = document.getElementById(equip.Upgrade);
             if (evaluation.StatusBorder != 'white' && evaluation.StatusBorder != 'yellow' && $equipUpgrade)
-                $equipUpgrade.style.color = evaluation.StatusBorder;
+                UpdateEquipColor($equipUpgrade, evaluation.StatusBorder);
             if (evaluation.StatusBorder == 'yellow' && $equipUpgrade)
-                $equipUpgrade.style.color = 'white';
+                UpdateEquipColor($equipUpgrade, 'white');
             if (equipName == 'Gym' && needGymystic()) {
-                $equipName.style.color = 'white';
-                $equipName.style.border = '1px solid white';
+                UpdateEquipColor($equipName, 'white');
+                UpdateEquipBorder($equipName, '1px solid white');
                 if ($equipUpgrade) {
-                    $equipUpgrade.style.color = 'red';
-                    $equipUpgrade.style.border = '2px solid red';
+                    UpdateEquipColor($equipUpgrade, 'red');
+                    UpdateEquipBorder($equipUpgrade, '2px solid red');
                 }
             }
 
@@ -384,8 +384,8 @@ function autoLevelEquipment(hdStats, vmStatus) {
                         debug('Upgrading ' + upgrade + " # " + game.upgrades[upgrade].allowed, "equips", '*upload');
                     buyUpgrade(upgrade, true, true);
                 } else {
-                    $equipName.style.color = 'orange';
-                    $equipName.style.border = '2px solid orange';
+                    UpdateEquipColor($equipName, 'orange');
+                    UpdateEquipBorder($equipName, '2px solid orange');
                 }
             }
         }
@@ -400,12 +400,12 @@ function autoLevelEquipment(hdStats, vmStatus) {
             var $eqName = document.getElementById(eqName);
             var DaThing = equipmentList[eqName];
             if (eqName == 'Gym' && needGymystic()) {
-                $eqName.style.color = 'white';
-                $eqName.style.border = '1px solid white';
+                UpdateEquipColor($eqName, 'white');
+                UpdateEquipBorder($eqName,'1px solid white');
                 continue;
             } else {
-                $eqName.style.color = Best[stat].Wall ? 'orange' : 'red';
-                $eqName.style.border = '2px solid red';
+                UpdateEquipColor($eqName, Best[stat].Wall ? 'orange' : 'red');
+                UpdateEquipBorder($eqName,'2px solid red');
             }
             var maxmap = getPageSetting('MaxMapBonusAfterZone') && doMaxMapBonus;
             if (BuyArmorLevels && (DaThing.Stat == 'health' || DaThing.Stat == 'block') && (!enoughHealth || !enoughHealthE && enoughDamage || maxmap)) {
@@ -676,7 +676,7 @@ function RautoLevelEquipment() {
         var gameResource = game.equipment[equipName];
         if (!gameResource.locked) {
             var $equipName = document.getElementById(equipName);
-            $equipName.style.color = 'white';
+            UpdateEquipColor($equipName, 'white');
             var evaluation = RevaluateEquipmentEfficiency(equipName);
             var BKey = equip.Stat + equip.Resource;
 
@@ -690,14 +690,14 @@ function RautoLevelEquipment() {
             RresourcesNeeded[equip.Resource] += RBest[BKey].Cost;
 
             if (evaluation.Wall)
-                $equipName.style.color = 'yellow';
-            $equipName.style.border = '1px solid ' + evaluation.StatusBorder;
+                UpdateEquipColor($equipName, 'yellow');
+            UpdateEquipBorder($equipName, '1px solid ' + evaluation.StatusBorder);
 
             var $equipUpgrade = document.getElementById(equip.Upgrade);
             if (evaluation.StatusBorder != 'white' && evaluation.StatusBorder != 'yellow' && $equipUpgrade)
-                $equipUpgrade.style.color = evaluation.StatusBorder;
+                UpdateEquipColor($equipUpgrade, evaluation.StatusBorder);
             if (evaluation.StatusBorder == 'yellow' && $equipUpgrade)
-                $equipUpgrade.style.color = 'white';
+                UpdateEquipColor($equipUpgrade, 'white');
             if (evaluation.StatusBorder == 'red') {
                 var BuyWeaponUpgrades = ((getPageSetting('RBuyWeaponsNew') == 1) || (getPageSetting('RBuyWeaponsNew') == 2));
                 var BuyArmorUpgrades = ((getPageSetting('RBuyArmorNew') == 1) || (getPageSetting('RBuyArmorNew') == 2));
@@ -721,8 +721,8 @@ function RautoLevelEquipment() {
                     debug('Upgrading ' + upgrade + " - Prestige " + game.equipment[equipName].prestige, "equips", '*upload');
                     buyUpgrade(upgrade, true, true);
                 } else {
-                    $equipName.style.color = 'orange';
-                    $equipName.style.border = '2px solid orange';
+                    UpdateEquipColor($equipName, 'orange');
+                    UpdateEquipBorder($equipName, '2px solid orange');
                 }
             }
         }
@@ -736,8 +736,8 @@ function RautoLevelEquipment() {
         if (eqName !== '') {
             var $eqName = document.getElementById(eqName);
             var DaThing = RequipmentList[eqName];
-            $eqName.style.color = RBest[stat].Wall ? 'orange' : 'red';
-            $eqName.style.border = '2px solid red';
+            UpdateEquipColor($eqName, RBest[stat].Wall ? 'orange' : 'red');
+            UpdateEquipBorder($eqName,'2px solid red');
             var maxmap = getPageSetting('RMaxMapBonusAfterZone') && RdoMaxMapBonus;
             if (BuyArmorLevels && DaThing.Stat == 'health' && (!enoughHealthE || maxmap)) {
                 game.global.buyAmt = Rgearamounttobuy
@@ -1168,4 +1168,16 @@ function estimateEquipsForZone() {
 
     return [totalCost, bonusLevels, tempEqualityUse];
     
+}
+
+function UpdateEquipColor(equip, color) {
+    if (!usingRealTimeOffline) {
+        equip.style.color = color;
+    }
+}
+
+function UpdateEquipBorder(equip, border) {
+    if (!usingRealTimeOffline) {
+        equip.style.border = border;
+    }
 }
