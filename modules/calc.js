@@ -773,15 +773,10 @@ function calcEnemyAttack(type, zone, cell = 99, name = "Snimp", minOrMax) {
         attack *= Math.pow(game.empowerments.Ice.getModifier(), afterTransfer);
     }
 
-    if (!disableFlucts) {
-        if (minFluct > 1) minFluct = 1;
-        if (maxFluct == -1) maxFluct = fluctuation;
-        if (minFluct == -1) minFluct = fluctuation;
-        var min = Math.floor(number * (1 - minFluct));
-        var max = Math.ceil(number + (number * maxFluct));
+        var min = Math.floor(attack);
+        var max = Math.ceil(attack);
         return minOrMax ? min : max;
-    } else
-        return number;
+
 }
 
 function calcSpecificEnemyAttack(critPower=2, customBlock, customHealth) {
