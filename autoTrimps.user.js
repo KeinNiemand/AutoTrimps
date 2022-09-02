@@ -17,7 +17,7 @@
 var script = document.createElement('script');
 script.id = 'AutoTrimps-KeinNiemand';
 //This can be edited to point to your own Github Repository URL.
-script.src = 'https://raw.githack.com/KeinNiemand/AutoTrimpsRay/test/AutoTrimps2.js';
+script.src = 'https://raw.githack.com/KeinNiemand/AutoTrimps/test/AutoTrimps2.js';
 //script.setAttribute('crossorigin',"use-credentials");
 script.setAttribute('crossorigin',"anonymous");
 document.head.appendChild(script);

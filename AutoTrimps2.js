@@ -1,6 +1,6 @@
 var ATversion = 'KeinNiemand Test';
 var atscript = document.getElementById('AutoTrimps-script');
-var basepath = 'https://raw.githack.com/KeinNiemand/AutoTrimpsRay/test/', modulepath='modules/';
+var basepath = 'https://raw.githack.com/KeinNiemand/AutoTrimps/test/', modulepath='modules/';
 atscript !== null && (basepath = atscript.src.replace(/AutoTrimps2\.js$/,''));
 
 function ATscriptLoad(a,b) {
