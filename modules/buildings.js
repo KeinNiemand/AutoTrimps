@@ -78,7 +78,7 @@ function buyFoodEfficientHousing() {
     var unlockedHousing = ["Hut", "House", "Mansion", "Hotel", "Resort"].filter(b => !game.buildings[b].locked);
 
     //Resets Border Color
-    unlockedHousing.forEach(b => UpdateBorder(b))
+    unlockedHousing.forEach(b => UpdateBorder(b,  "1px solid #FFFFFF"))
 
     //Checks for Limits
     if (!ignoresLimit) {
@@ -88,7 +88,7 @@ function buyFoodEfficientHousing() {
                 return true;
 
             //But paints their border before removing them
-            UpdateBorder(b);
+            UpdateBorder(b,  "1px solid orange")
             return false
         })
     }
@@ -105,7 +105,7 @@ function buyFoodEfficientHousing() {
 
     //If Food Efficiency Ignores Limit is enabled, then it only buy Huts and Houses here
     if (!ignoresLimit || ["Hut", "House"].includes(bestFoodBuilding.name)) {
-        UpdateBorder(bestFoodBuilding.name);
+        UpdateBorder(bestFoodBuilding.name,  "1px solid #00CC01");
         safeBuyBuilding(bestFoodBuilding.name);
     }
 }
@@ -124,7 +124,7 @@ function buyGemEfficientHousing() {
         var cost = getBuildingItemPrice(building, "gems", false, 1);
         var ratio = cost / building.increase.by;
         obj[unlockedHousing[house]] = ratio;
-        UpdateBorder(unlockedHousing[house]);
+        UpdateBorder(unlockedHousing[house],  "1px solid #FFFFFF");
     }
     var keysSorted = Object.keys(obj).sort(function (a, b) {
             return obj[a] - obj[b];
@@ -135,12 +135,12 @@ function buyGemEfficientHousing() {
         if (max === false) max = -1;
         if (game.buildings[keysSorted[best]].owned < max || max == -1 || (getPageSetting('GemEfficiencyIgnoresMax') && keysSorted[best] != "Gateway")) {
             bestGemBuilding = keysSorted[best];
-            UpdateBorder(bestGemBuilding);
+            UpdateBorder(bestGemBuilding,  "1px solid #00CC00");
 
             //Gateway Wall
             if (bestGemBuilding == "Gateway" && getPageSetting('GatewayWall') > 1) {
                 if (getBuildingItemPrice(game.buildings.Gateway, "fragments", false, 1) > (game.resources.fragments.owned / getPageSetting('GatewayWall'))) {
-                    UpdateBorder(bestGemBuilding);
+                    UpdateBorder(bestGemBuilding,  "1px solid orange");
                     bestGemBuilding = null;
                     continue;
                 }
@@ -362,7 +362,7 @@ function RbuyFoodEfficientHousing() {
             'name': unlockedHousing[house],
             'ratio': ratio
         });
-        UpdateBorder(unlockedHousing[house])
+        UpdateBorder(unlockedHousing[house],  "1px solid #FFFFFF");
     }
     buildorder.sort(function (a, b) {
         return a.ratio - b.ratio;
@@ -374,7 +374,7 @@ function RbuyFoodEfficientHousing() {
         bestfoodBuilding = bb.name;
     }
     if (smithylogic(bestfoodBuilding, 'wood', false) && bestfoodBuilding) {
-        UpdateBorder(bestfoodBuilding);
+        UpdateBorder(bestfoodBuilding,  "1px solid #00CC01");
         RsafeBuyBuilding(bestfoodBuilding);
     }
     }
@@ -394,7 +394,7 @@ function RbuyGemEfficientHousing() {
         var cost = getBuildingItemPrice(building, "gems", false, 1);
         var ratio = cost / building.increase.by;
         obj[unlockedHousing[house]] = ratio;
-        UpdateBorder(unlockedHousing[house]);
+        UpdateBorder(unlockedHousing[house],  "1px solid #FFFFFF");
     }
     var keysSorted = Object.keys(obj).sort(function (a, b) {
             return obj[a] - obj[b];
@@ -405,7 +405,7 @@ function RbuyGemEfficientHousing() {
         if (max === false) max = -1;
         if (game.buildings[keysSorted[best]].owned < max || max == -1) {
             bestBuilding = keysSorted[best];
-            UpdateBorder(bestBuilding);
+            UpdateBorder(bestBuilding,  "1px solid #00CC00");
             break;
         }
     }
@@ -535,7 +535,7 @@ function RbuyBuildings() {
 }
 
 function UpdateBorder(b, value) {
-    if (!usingRealTimeOffline) {
+    if (!useRealTimeOffline) {
         document.getElementById(b).style.border = value;
     }
     
