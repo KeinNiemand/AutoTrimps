@@ -166,11 +166,10 @@ function mainLoop() {
         const vmStatus = getVoidMapStatus();
         const hdStats = new HDStats(vmStatus);
 
-        //Offline Progress
-        if (!usingRealTimeOffline) { 
-            setScienceNeeded();
-            autoLevelEquipment(hdStats, vmStatus);
-        }
+
+        setScienceNeeded();
+        autoLevelEquipment(hdStats, vmStatus);
+
 
         //Core
         if (getPageSetting('AutoMaps') > 0) {
