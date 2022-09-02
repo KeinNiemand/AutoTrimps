@@ -535,7 +535,7 @@ function RbuyBuildings() {
 }
 
 function UpdateBorder(b, value) {
-    if (!useRealTimeOffline) {
+    if (!usingRealTimeOffline) {
         document.getElementById(b).style.border = value;
     }
     
