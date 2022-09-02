@@ -166,11 +166,10 @@ function mainLoop() {
         const vmStatus = getVoidMapStatus();
         const hdStats = new HDStats(vmStatus);
 
-        //Offline Progress
-        
+
         setScienceNeeded();
         autoLevelEquipment(hdStats, vmStatus);
-        
+
 
         //Core
         if (getPageSetting('AutoMaps') > 0) {
