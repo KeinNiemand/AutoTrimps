@@ -1731,62 +1731,6 @@ function dailyPraiding() {
     }
 }
 
-function dailyBWraiding() {
-    var cell;
-    cell = ((getPageSetting('dbwraidcell') > 0) ? getPageSetting('dbwraidcell') : 1);
-    if (!dprestraidon && game.global.world == getPageSetting('dBWraidingz') && ((game.global.lastClearedCell + 1) >= cell) && !dbwraided && !dfailbwraid && getPageSetting('Dailybwraid')) {
-        if (getPageSetting('AutoMaps') == 1 && !dbwraided && !dfailbwraid) {
-            autoTrimpSettings["AutoMaps"].value = 0;
-        }
-        if (!game.global.preMapsActive && !game.global.mapsActive && !dbwraided && !dfailbwraid) {
-            mapsClicked();
-            if (!game.global.preMapsActive) {
-                mapsClicked();
-            }
-        }
-        if (game.options.menu.repeatUntil.enabled != 2 && !dbwraided && !dfailbwraid) {
-            game.options.menu.repeatUntil.enabled = 2;
-        }
-        if (game.global.preMapsActive && !dbwraided && !dfailbwraid) {
-            selectMap(findLastBionic().id);
-            dfailbwraid = false;
-            debug("Beginning Daily BW Raiding...");
-        } else if (game.global.preMapsActive && !dbwraided && !dfailbwraid) {
-            if (getPageSetting('AutoMaps') == 0 && game.global.world == getPageSetting('dBWraidingz') && !dbwraided) {
-                autoTrimpSettings["AutoMaps"].value = 1;
-                dfailbwraid = true;
-                debug("Failed to Daily BW raid. Looks like you don't have a BW to raid...");
-            }
-        }
-        if (findLastBionic().level <= getPageSetting('dBWraidingmax') && !dbwraided && !dfailbwraid && game.global.preMapsActive) {
-            runMap();
-            dbwraidon = true;
-        }
-        if (!game.global.repeatMap && !dbwraided && !dfailbwraid && game.global.mapsActive) {
-            repeatClicked();
-        }
-        if (findLastBionic().level > getPageSetting('dBWraidingmax') && !dbwraided && !dfailbwraid) {
-            dbwraided = true;
-            dfailbwraid = false;
-            dbwraidon = false;
-            debug("...Successfully Daily BW raided!");
-        }
-        if (getPageSetting('AutoMaps') == 0 && game.global.preMapsActive && game.global.world == getPageSetting('dBWraidingz') && dbwraided && !dfailbwraid) {
-            autoTrimpSettings["AutoMaps"].value = 1;
-            debug("Turning AutoMaps back on");
-        }
-    }
-    if (getPageSetting('AutoMaps') == 0 && game.global.preMapsActive && dbwraided && !dfailbwraid) {
-        autoTrimpSettings["AutoMaps"].value = 1;
-        debug("Turning AutoMaps back on");
-    }
-    if (dbwraided && !dfailbwraid && game.global.world !== getPageSetting('dBWraidingz')) {
-        dbwraided = false;
-        dfailbwraid = false;
-        dbwraidon = false;
-    }
-}
-
 function trimpcide() {
     if (game.portal.Anticipation.level > 0) {
         var antistacklimit = (game.talents.patience.purchased) ? 45 : 30;
