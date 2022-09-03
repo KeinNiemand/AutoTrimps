@@ -26,17 +26,6 @@ function customLeadTimer(hdStats) {
     else return Math.min(30, 35 - 3.0 * game.challenges.Lead.stacks/20.0);
 }
 
-function trimpsEffectivelyEmployed() {
-    //Init
-    var employedTrimps = game.resources.trimps.employed;
-
-    //Multitasking
-    if (game.permaBoneBonuses.multitasking.owned)
-        employedTrimps *= (1 - game.permaBoneBonuses.multitasking.mult());
-
-    return employedTrimps;
-}
-
 function potencyMod() {
     //Init
     var trimps = game.resources.trimps;
