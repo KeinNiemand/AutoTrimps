@@ -1,4 +1,4 @@
-# AutoTrimps - Ray Fork
+# AutoTrimps - Kein Niemand Fork
 
 
 
@@ -11,6 +11,7 @@ Discord is a chat program. Come to talk about AutoTrimps, for help, or suggestio
 ## Current Version - Ongoing Development!
 - Zek Fork. All changes made by Zek using GenBTC as base. Currently up-to-date as of 04/2021.
 - Ray Fork. U1 code heavily rewritten and changed by Psycho-Ray, with big contributions from livercat. Please report any bugs you may find.
+- Kein Niemand Fork. Fixes/Improves Offline Progress.
 
 ## Changelist vs Zek's Fork
 Well, I changed a lot, and didn't properly keep track of it, but I made and effort to create a change list with whatever came to my mind. 
@@ -24,13 +25,13 @@ Install TamperMonkey:
 https://www.tampermonkey.net/
 
 Step 2:  
-Click this link: https://github.com/Psycho-Ray/AutoTrimps/raw/gh-pages/.user.js  
+Click this link: https://github.com/KeinNiemand/AutoTrimps/raw/test/autoTrimps.user.js
 If clicking the link does not work, copy the contents of user.js into a new script inside tampermonkey.  
 If you are unsure how to do that, copy this:  
 ```
 var script = document.createElement('script');
 script.id = 'AutoTrimps-Ray';
-script.src = 'https://Psycho-Ray.github.io/AutoTrimps/AutoTrimps2.js';
+script.src = 'https://raw.githack.com/KeinNiemand/AutoTrimps/test/AutoTrimps2.js';
 script.setAttribute('crossorigin',"anonymous");
 document.head.appendChild(script);
 ```  
@@ -41,7 +42,7 @@ Configure settings. Will NOT work as intended with default settings.
 
 ### Steam
 Step 1:  
-Go to this link to open the mods.js file on Github: <a href="https://github.com/Psycho-Ray/AutoTrimps/blob/gh-pages/mods.js">mods.js</a>  
+Go to this link to open the mods.js file on Github: <a href="https://github.com/KeinNiemand/AutoTrimps/blob/test/mods.js">mods.js</a>  
 Then, right click the Raw button, hit Save link as, and save the mods.js file somewhere to your computer where you can find it, like desktop.  
 ![Download mods.js](https://i.imgur.com/opuO6yd.png)  
 
