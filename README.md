@@ -1,4 +1,4 @@
-# AutoTrimps - Ray Fork
+# AutoTrimps - Ray/Zek Merge Fork Test
 
 
 
@@ -10,8 +10,8 @@ Discord is a chat program. Come to talk about AutoTrimps, for help, or suggestio
 
 
 
-## Current Version - Ongoing Development!
-- Zek Fork. All changes made by Zek using GenBTC as base. Currently up-to-date as of 06/2022.
+## Current Version - Buggy Broken Attemt at Merging Zeks And Rays Fork
+- This is my broken attemt at merging Zeks and Rays fork. While it does manage to run there are probably a lot of things that are Broken. Make sure to backup your save and Autotrimps settings if you want to try this. I probably won't fix this unless somone tests it for me and it fixing this turns out to to not be to hard. Maybe some parts of this actually work and might be usefull if someone actually tries merging the forks manually/more carefully.
 
 
 
