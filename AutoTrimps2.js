@@ -152,6 +152,7 @@ function mainLoop() {
         offlineInterval = null;
         aTTimeLapseFastLoop = false;
         setInterval(mainLoop, runInterval);
+        setInterval(guiLoop, runInterval*10);
     }
     if (ATrunning == false) return;
     if (getPageSetting('PauseScript') || game.options.menu.pauseGame.enabled || game.global.viewingUpgrades) return;
