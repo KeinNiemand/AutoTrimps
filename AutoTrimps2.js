@@ -59,7 +59,7 @@ function printChangelog() {
 }
 
 var runInterval = 100;
-const timeLapseRunInterval = 20;
+const timeLapseRunInterval = 5;
 var startupDelay = 1000;
 var aTTimeLapseFastLoop = false;
 
