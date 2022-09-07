@@ -59,7 +59,9 @@ function printChangelog() {
 }
 
 var runInterval = 100;
-var startupDelay = 3000;
+const timeLapseRunInterval = 20;
+var startupDelay = 1000;
+var aTTimeLapseFastLoop = false;
 
 setTimeout(delayStart, startupDelay);
 
@@ -73,8 +75,14 @@ function delayStartAgain(){
     game.global.addonUser = true;
     game.global.autotrimps = true;
     MODULESdefault = JSON.parse(JSON.stringify(MODULES));
-    setInterval(mainLoop, runInterval);
-    setInterval(guiLoop, runInterval*10);
+    if (usingRealTimeOffline) {
+        aTTimeLapseFastLoop = true;
+        offlineInterval = setInterval(mainLoop, timeLapseRunInterval);
+    }
+    else {
+        setInterval(mainLoop, runInterval);
+        setInterval(guiLoop, runInterval*10);
+    }
 }
 
 /*function delayStartAgain(){
@@ -136,6 +144,15 @@ var lastHeliumZone = 0;
 var lastRadonZone = 0;
 
 function mainLoop() {
+    //Disable atofflinefastloop if we are not using realtime offline
+    //remove mainLoop from setInterval if we are not using realtime offline
+    //set mainLoop to run on a setInterval at runInterval speed
+    if (!usingRealTimeOffline && aTTimeLapseFastLoop) {
+        clearInterval(offlineInterval);
+        offlineInterval = null;
+        aTTimeLapseFastLoop = false;
+        setInterval(mainLoop, runInterval);
+    }
     if (ATrunning == false) return;
     if (getPageSetting('PauseScript') || game.options.menu.pauseGame.enabled || game.global.viewingUpgrades) return;
     ATrunning = true;
