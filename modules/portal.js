@@ -36,6 +36,21 @@ function autoPortal() {
                         else
                             doPortal();
                     }
+                    else {
+                        zonePostpone += 1;
+                        debug("My HeliumHr was: " + myHeliumHr + " & the Best HeliumHr was: " + bestHeHr + " at zone: " + bestHeHrZone, "portal");
+                        cancelTooltip();
+                        tooltip('confirm', null, 'update', '<b>Auto Portaling NOW!</b><p>Hit Delay Portal to WAIT 1 more zone.', 'zonePostpone+=1', '<b>NOTICE: Auto-Portaling in 5 seconds....</b>', 'Delay Portal');
+                        setTimeout(cancelTooltip, MODULES["portal"].timeout);
+                        setTimeout(function() {
+                            if (zonePostpone >= 2)
+                                return;
+                            if (autoTrimpSettings.HeliumHourChallenge.selected != 'None')
+                                doPortal(autoTrimpSettings.HeliumHourChallenge.selected);
+                            else
+                                doPortal();
+                        }, MODULES["portal"].timeout + 100);
+                    }
                 }
 
 
