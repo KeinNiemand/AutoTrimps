@@ -78,7 +78,7 @@ function delayStartAgain(){
     game.global.autotrimps = true;
     MODULESdefault = JSON.parse(JSON.stringify(MODULES));
 
-    origninalGameLoop = gameLoop;
+    originalGameLoop = gameLoop;
     //Starts the loop in either normal or TimeLapse mode.
     toggleCatchUpMode();
 }
