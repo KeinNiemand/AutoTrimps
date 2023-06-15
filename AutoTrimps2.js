@@ -62,6 +62,8 @@ var runInterval = 100;
 const timeLapseRunInterval = 5;
 var startupDelay = 1000;
 var aTTimeLapseFastLoop = false;
+var mainLoopInterval = null;
+var guiLoopInterval = null;
 
 setTimeout(delayStart, startupDelay);
 
