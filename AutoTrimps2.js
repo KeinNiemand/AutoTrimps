@@ -77,14 +77,10 @@ function delayStartAgain(){
     game.global.addonUser = true;
     game.global.autotrimps = true;
     MODULESdefault = JSON.parse(JSON.stringify(MODULES));
-    if (usingRealTimeOffline) {
-        aTTimeLapseFastLoop = true;
-        mainLoopInterval = setInterval(mainLoop, timeLapseRunInterval);
-    }
-    else {
-        mainLoopInterval = setInterval(mainLoop, runInterval);
-        guiLoopInterval = setInterval(guiLoop, runInterval*10);
-    }
+
+    origninalGameLoop = gameLoop;
+    //Starts the loop in either normal or TimeLapse mode.
+    toggleCatchUpMode();
 }
 
 /*function delayStartAgain(){
@@ -149,25 +145,7 @@ function mainLoop() {
     //Disable atofflinefastloop if we are not using realtime offline
     //remove mainLoop from setInterval if we are not using realtime offline
     //set mainLoop to run on a setInterval at runInterval speed
-    if (!usingRealTimeOffline && aTTimeLapseFastLoop) {
-        clearInterval(mainLoopInterval);
-        if (guiLoopInterval) clearInterval(guiLoopInterval);
-        mainLoopInterval = null;
-        aTTimeLapseFastLoop = false;
-        mainLoopInterval = setInterval(mainLoop, runInterval);
-        guiLoopInterval = setInterval(guiLoop, runInterval*10);
-    } 
-    else if (usingRealTimeOffline && !aTTimeLapseFastLoop) {
-        clearInterval(mainLoopInterval);
-        if (guiLoopInterval) 
-        {
-            clearInterval(guiLoopInterval);
-            guiLoopInterval = null;
-        }
-        mainLoopInterval = null;
-        aTTimeLapseFastLoop = true;
-        mainLoopInterval = setInterval(mainLoop, timeLapseRunInterval);
-    }
+    toggleCatchUpMode();
 
     if (ATrunning == false) return;
     if (getPageSetting('PauseScript') || game.options.menu.pauseGame.enabled || game.global.viewingUpgrades) return;
@@ -397,6 +375,42 @@ function mainLoop() {
         if (Ragu && Ragu != 'Off' && (!game.global.runningChallengeSquared && game.global.challengeActive != "Daily")) RautoGoldenUpgradesAT(Ragu);
         if (Rdagu && Rdagu != 'Off' && game.global.challengeActive == "Daily") RautoGoldenUpgradesAT(Rdagu);
         if (Rcagu && Rcagu != 'Off' && game.global.runningChallengeSquared) RautoGoldenUpgradesAT(Rcagu);
+    }
+}
+
+function toggleCatchUpMode() {
+
+    //Start and Intilise loop if this is called for the first time
+    if (!mainLoopInterval && !guiLoopInterval && !aTTimeLapseFastLoop) {
+        mainLoopInterval = setInterval(mainLoop, runInterval);
+        guiLoopInterval = setInterval(guiLoop, runInterval * 10);
+    }
+    //Enable Online Mode after Offline mode was enabled
+    if (!usingRealTimeOffline && aTTimeLapseFastLoop) {
+        if (mainLoopInterval) clearInterval(mainLoopInterval);
+        if (guiLoopInterval) clearInterval(guiLoopInterval);
+        mainLoopInterval = null;
+        aTTimeLapseFastLoop = false;
+        originalGameLoop = gameLoop;
+        mainLoopInterval = setInterval(mainLoop, runInterval);
+        guiLoopInterval = setInterval(guiLoop, runInterval * 10);
+    }
+    else if (usingRealTimeOffline && !aTTimeLapseFastLoop) { //Enable Offline Mode
+        if (mainLoopInterval)
+        {
+            clearInterval(mainLoopInterval);
+            mainLoopInterval = null;
+        } 
+        if (guiLoopInterval) {
+            clearInterval(guiLoopInterval);
+            guiLoopInterval = null;
+        }
+        aTTimeLapseFastLoop = true;
+        gameLoop = function(makeUp, now) {
+            originalGameLoop(makeUp, now)
+            if (loops % 20 === 0) mainLoop(); 
+        }
+        //mainLoopInterval = setInterval(mainLoop, timeLapseRunInterval);
     }
 }
 
