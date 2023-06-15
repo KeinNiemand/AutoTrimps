@@ -378,6 +378,7 @@ function mainLoop() {
     }
 }
 
+//Starts the main/gui loop and switches to catchup mode if needed also switches back to realtime mode if needed
 function toggleCatchUpMode() {
 
     //Start and Intilise loop if this is called for the first time
