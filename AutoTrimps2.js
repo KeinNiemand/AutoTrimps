@@ -19,7 +19,7 @@ function loadAT() {
 loadAT();
 
 //Backup on the off chance the script hasn't been found
-if (MODULES_AT.basepath === '') MODULES_AT.basepath = 'https://SadAugust.github.io/AutoTrimps/';
+if (MODULES_AT.basepath === '') MODULES_AT.basepath = 'https://raw.githack.com/KeinNiemand/AutoTrimps/AugustTest/';
 basepath = MODULES_AT.basepath;
 
 function ATscriptLoad(a, b) {
