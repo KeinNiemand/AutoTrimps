@@ -77,7 +77,7 @@ function delayStartAgain(){
     MODULESdefault = JSON.parse(JSON.stringify(MODULES));
     if (usingRealTimeOffline) {
         aTTimeLapseFastLoop = true;
-        offlineInterval = setInterval(mainLoop, timeLapseRunInterval);
+        mainLoopInterval = setInterval(mainLoop, timeLapseRunInterval);
     }
     else {
         setInterval(mainLoop, runInterval);
@@ -148,12 +148,25 @@ function mainLoop() {
     //remove mainLoop from setInterval if we are not using realtime offline
     //set mainLoop to run on a setInterval at runInterval speed
     if (!usingRealTimeOffline && aTTimeLapseFastLoop) {
-        clearInterval(offlineInterval);
-        offlineInterval = null;
+        clearInterval(mainLoopInterval);
+        if (guiLoopInterval) clearInterval(guiLoopInterval);
+        mainLoopInterval = null;
         aTTimeLapseFastLoop = false;
-        setInterval(mainLoop, runInterval);
-        setInterval(guiLoop, runInterval*10);
+        mainLoopInterval = setInterval(mainLoop, runInterval);
+        guiLoopInterval = setInterval(guiLoop, runInterval*10);
+    } 
+    else if (usingRealTimeOffline && !aTTimeLapseFastLoop) {
+        clearInterval(mainLoopInterval);
+        if (guiLoopInterval) 
+        {
+            clearInterval(guiLoopInterval);
+            guiLoopInterval = null;
+        }
+        mainLoopInterval = null;
+        aTTimeLapseFastLoop = true;
+        mainLoopInterval = setInterval(mainLoop, timeLapseRunInterval);
     }
+
     if (ATrunning == false) return;
     if (getPageSetting('PauseScript') || game.options.menu.pauseGame.enabled || game.global.viewingUpgrades) return;
     ATrunning = true;
