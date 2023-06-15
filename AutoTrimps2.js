@@ -80,8 +80,8 @@ function delayStartAgain(){
         mainLoopInterval = setInterval(mainLoop, timeLapseRunInterval);
     }
     else {
-        setInterval(mainLoop, runInterval);
-        setInterval(guiLoop, runInterval*10);
+        mainLoopInterval = setInterval(mainLoop, runInterval);
+        guiLoopInterval = setInterval(guiLoop, runInterval*10);
     }
 }
 
