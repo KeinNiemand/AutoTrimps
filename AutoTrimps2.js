@@ -392,7 +392,7 @@ function toggleCatchUpMode() {
         if (guiLoopInterval) clearInterval(guiLoopInterval);
         mainLoopInterval = null;
         aTTimeLapseFastLoop = false;
-        originalGameLoop = gameLoop;
+        gameLoop = originalGameLoop;
         mainLoopInterval = setInterval(mainLoop, runInterval);
         guiLoopInterval = setInterval(guiLoop, runInterval * 10);
     }
